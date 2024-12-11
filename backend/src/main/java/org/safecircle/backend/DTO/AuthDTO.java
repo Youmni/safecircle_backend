@@ -1,4 +1,4 @@
-package org.safecircle.backend.DTO;
+package org.safecircle.backend.dto;
 
 public class AuthDTO {
 

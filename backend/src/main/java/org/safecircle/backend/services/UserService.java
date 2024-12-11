@@ -1,8 +1,8 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
-import org.safecircle.backend.DTO.AuthDTO;
-import org.safecircle.backend.DTO.UserDTO;
+import org.safecircle.backend.dto.AuthDTO;
+import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.CircleUser;
