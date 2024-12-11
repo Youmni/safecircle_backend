@@ -25,18 +25,18 @@ public class User {
     private long userId;
 
     @NotBlank
-    @Size(min = 2, max = 50, message = "First name must be between 5 and 15 characters")
+    @Size(min = 2, max = 50, message = "First name must be between 5 and 50 characters")
     @Column(name = "first_name")
     private String firstName;
 
     @NotBlank
-    @Size(min = 2, max = 50, message = "Last name must be between 5 and 15 characters")
+    @Size(min = 2, max = 50, message = "Last name must be between 5 and 50 characters")
     @Column(name = "last_name")
     private String lastName;
 
     @NotBlank(message = "Email cannot be empty or null")
     @Email(message = "Email must be valid")
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @NotBlank(message = "Password cannot be empty or null")
@@ -44,7 +44,7 @@ public class User {
     private String password;
 
     @Column(name = "phone_number")
-    private long phoneNumber;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @NotBlank(message = "Usertype should be given. Option are: ADMIN, USER")
@@ -86,7 +86,7 @@ public class User {
 
     protected User() {}
 
-    public User(String firstName, String lastName, String email, String password, long phoneNumber, UserType type) {
+    public User(String firstName, String lastName, String email, String password, String phoneNumber, UserType type) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -135,11 +135,11 @@ public class User {
         this.password = password;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

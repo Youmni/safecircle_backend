@@ -21,7 +21,7 @@ public class Circle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cirlce_id")
+    @Column(name = "circle_id")
     private long circleId;
 
     @NotBlank(message = "Circle name required")
