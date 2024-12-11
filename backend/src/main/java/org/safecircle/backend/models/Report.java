@@ -1,12 +1,19 @@
 package org.safecircle.backend.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.safecircle.backend.enums.ReportStatus;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Report {
@@ -29,6 +36,12 @@ public class Report {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "The report status is required. Accepted values are: PENDING, RESOLVED, CLOSED, FLAGGED")
     private ReportStatus status;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
