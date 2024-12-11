@@ -43,19 +43,19 @@ public class UserAlert {
         this.id = id;
     }
 
-    public User getUser() {
+    public @NotNull(message = "User is required") User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(@NotNull(message = "User is required") User user) {
         this.user = user;
     }
 
-    public Alert getAlert() {
+    public @NotNull(message = "Alert is required") Alert getAlert() {
         return alert;
     }
 
-    public void setAlert(Alert alert) {
+    public void setAlert(@NotNull(message = "Alert is required") Alert alert) {
         this.alert = alert;
     }
 

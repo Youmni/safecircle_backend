@@ -47,4 +47,44 @@ public class Location {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public Long getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public @NotEmpty(message = "You need to provide a longitude") @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90") BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(@NotEmpty(message = "You need to provide a longitude") @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90") BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public @NotEmpty(message = "You need to provide a latitude") @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90") BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(@NotEmpty(message = "You need to provide a latitude") @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90") BigDecimal latitude) {
+        this.latitude = latitude;
+    }
 }

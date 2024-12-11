@@ -51,12 +51,26 @@ public class User {
     private UserType type;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Blacklist> blacklists;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Invitation> invitations;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Report> reports;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     Set<UserAlert> userAlerts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     Set<CircleUser> circleUsers;
+
+    @ManyToOne
+    @JoinColumn(name = "location", nullable = false)
+    @JsonBackReference
+    private Location location;
 
     @CreationTimestamp
     @Column(name = "created_at")

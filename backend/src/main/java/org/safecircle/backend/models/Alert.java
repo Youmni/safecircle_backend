@@ -41,6 +41,11 @@ public class Alert {
     @JsonBackReference
     Set<UserAlert> userAlerts;
 
+    @ManyToOne
+    @JoinColumn(name = "location", nullable = false)
+    @JsonBackReference
+    private Location location;
+
     @CreationTimestamp
     @Column(name = "created_at")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

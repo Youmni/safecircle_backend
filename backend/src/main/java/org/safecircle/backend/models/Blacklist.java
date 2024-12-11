@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -38,6 +39,11 @@ public class Blacklist {
     @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User is required")
+    private User user;
 
     @CreationTimestamp
     @Column(name = "created_at")
