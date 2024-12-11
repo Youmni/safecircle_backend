@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -47,7 +48,7 @@ public class User {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "Usertype should be given. Option are: ADMIN, USER")
+    @NotNull(message = "UserType must be specified and should be either ADMIN or USER")
     private UserType type;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,7 +69,7 @@ public class User {
     Set<CircleUser> circleUsers;
 
     @ManyToOne
-    @JoinColumn(name = "location", nullable = false)
+    @JoinColumn(name = "location_id")
     @JsonBackReference
     private Location location;
 
@@ -103,19 +104,19 @@ public class User {
         this.userId = userId;
     }
 
-    public @NotBlank @Size(min = 2, max = 50, message = "First name must be between 5 and 15 characters") String getFirstName() {
+    public @NotBlank @Size(min = 2, max = 50, message = "First name must be between 5 and 50 characters") String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotBlank @Size(min = 2, max = 50, message = "First name must be between 5 and 15 characters") String firstName) {
+    public void setFirstName(@NotBlank @Size(min = 2, max = 50, message = "First name must be between 5 and 50 characters") String firstName) {
         this.firstName = firstName;
     }
 
-    public @NotBlank @Size(min = 2, max = 50, message = "Last name must be between 5 and 15 characters") String getLastName() {
+    public @NotBlank @Size(min = 2, max = 50, message = "Last name must be between 5 and 50 characters") String getLastName() {
         return lastName;
     }
 
-    public void setLastName(@NotBlank @Size(min = 2, max = 50, message = "Last name must be between 5 and 15 characters") String lastName) {
+    public void setLastName(@NotBlank @Size(min = 2, max = 50, message = "Last name must be between 5 and 50 characters") String lastName) {
         this.lastName = lastName;
     }
 
@@ -143,12 +144,60 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public @NotBlank(message = "Usertype should be given. Option are: ADMIN, USER") UserType getType() {
+    public @NotNull(message = "UserType must be specified and should be either ADMIN or USER") UserType getType() {
         return type;
     }
 
-    public void setType(@NotBlank(message = "Usertype should be given. Option are: ADMIN, USER") UserType type) {
+    public void setType(@NotNull(message = "UserType must be specified and should be either ADMIN or USER") UserType type) {
         this.type = type;
+    }
+
+    public Set<Blacklist> getBlacklists() {
+        return blacklists;
+    }
+
+    public void setBlacklists(Set<Blacklist> blacklists) {
+        this.blacklists = blacklists;
+    }
+
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(Set<Invitation> invitations) {
+        this.invitations = invitations;
+    }
+
+    public Set<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(Set<Report> reports) {
+        this.reports = reports;
+    }
+
+    public Set<UserAlert> getUserAlerts() {
+        return userAlerts;
+    }
+
+    public void setUserAlerts(Set<UserAlert> userAlerts) {
+        this.userAlerts = userAlerts;
+    }
+
+    public Set<CircleUser> getCircleUsers() {
+        return circleUsers;
+    }
+
+    public void setCircleUsers(Set<CircleUser> circleUsers) {
+        this.circleUsers = circleUsers;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public LocalDateTime getCreatedAt() {

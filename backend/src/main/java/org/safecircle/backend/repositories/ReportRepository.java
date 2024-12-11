@@ -9,14 +9,16 @@ import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByReportId(long reportId);
-    List<Report> findAllByOrderByReportIdAsc(long reportId);
-    List<Report> findAllByOrderByReportIdDesc(long reportId);
+    List<Report> findAllByOrderByReportIdAsc();
+    List<Report> findAllByOrderByReportIdDesc();
 
-    List<Report> findAllBySubject(String subject);
+    List<Report> findBySubject(String subject);
 
-    List<Report> findAllByEmail(String email);
+    List<Report> findByEmail(String email);
+    List<Report> findByEmailContaining(String email);
 
-    List<Report> findAllByStatus(ReportStatus status);
+
+    List<Report> findByStatus(ReportStatus status);
 
     List<Report> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
     List<Report> findByCreatedAtBefore(LocalDateTime start);

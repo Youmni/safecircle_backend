@@ -33,11 +33,11 @@ public class Alert {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "circle", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     Set<CircleAlert> circleAlerts;
 
-    @OneToMany(mappedBy = "circle", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     Set<UserAlert> userAlerts;
 

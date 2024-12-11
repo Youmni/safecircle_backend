@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findByLocationId(long locationId);
-    List<Location> findAllByOrderByLocationIdAsc(long locationId);
-    List<Location> findAllByOrderByLocationIdDesc(long locationId);
+    List<Location> findAllByOrderByLocationIdAsc();
+    List<Location> findAllByOrderByLocationIdDesc();
 
     List<Location> findByCreatedAtBetween(LocalDateTime from, LocalDateTime to);
     List<Location> findByCreatedAtBefore(LocalDateTime time);

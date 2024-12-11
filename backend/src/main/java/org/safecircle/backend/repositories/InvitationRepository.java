@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     List<Invitation> findByInvitationId(long invitationId);
-    List<Invitation> findAllByOrderByInvitationIdAsc(long userId);
-    List<Invitation> findAllByOrderByInvitationIdDesc(long userId);
+    List<Invitation> findAllByOrderByInvitationIdAsc();
+    List<Invitation> findAllByOrderByInvitationIdDesc();
 
     List<Invitation> findByStatus(InvitationStatus status);
 

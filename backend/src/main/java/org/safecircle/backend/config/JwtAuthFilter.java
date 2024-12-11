@@ -21,9 +21,9 @@ import java.util.List;
 @Component
 public class JwtAuthFilter  extends OncePerRequestFilter {
 
-    @Autowired
     private JwtService jwtService;
 
+    @Autowired
     public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }

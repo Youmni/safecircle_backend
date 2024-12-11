@@ -12,8 +12,6 @@ public interface CircleRepository extends JpaRepository<Circle, Long> {
     List<Circle> findByCircleId(long id);
     List<Circle> findByCircleName(String name);
     List<Circle> findByCircleType(CircleType type);
-    List<Circle> findByAvailable(boolean available);
-
     List<Circle> findByCreatedAtBetween(LocalDateTime from, LocalDateTime to);
     List<Circle> findByCreatedAtBefore(LocalDateTime createdAt);
     List<Circle> findByCreatedAtAfter(LocalDateTime createdAt);

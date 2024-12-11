@@ -6,6 +6,7 @@ import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.CircleUser;
+import org.safecircle.backend.models.Location;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.models.UserAlert;
 import org.safecircle.backend.repositories.CircleUserRepository;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -34,8 +36,9 @@ public class UserService {
     public static final String WRONG_CREDENTIALS = "Wrong credentials";
     public static final String NOT_AUTHORIZED = "Not authorized";
 
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserAlertRepository userAlertRepository;
     private CircleUserRepository circleUserRepository;
 
@@ -64,6 +67,7 @@ public class UserService {
                         .body(ALREADY_EXISTS);
             }
 
+
             User user = new User(
                     userDTO.getFirstName(),
                     userDTO.getLastName(),
@@ -72,6 +76,8 @@ public class UserService {
                     userDTO.getPhone(),
                     UserType.USER
                     );
+
+
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(USER_CREATED);
         }catch(Exception e){
