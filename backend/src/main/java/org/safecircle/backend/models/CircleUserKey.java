@@ -9,14 +9,14 @@ import java.util.Objects;
 public class CircleUserKey {
 
     @Column(name = "circle_id")
-    private Long circleId;
+    private long circleId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private long userId;
 
     protected CircleUserKey() {}
 
-    public CircleUserKey(Long circleId, Long userId) {
+    public CircleUserKey(long circleId, long userId) {
         this.circleId = circleId;
         this.userId = userId;
     }
@@ -34,19 +34,19 @@ public class CircleUserKey {
         return Objects.hash(circleId, userId);
     }
 
-    public Long getCircleId() {
+    public long getCircleId() {
         return circleId;
     }
 
-    public void setCircleId(Long circleId) {
+    public void setCircleId(long circleId) {
         this.circleId = circleId;
     }
 
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

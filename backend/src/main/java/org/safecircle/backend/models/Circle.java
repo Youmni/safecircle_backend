@@ -22,7 +22,7 @@ public class Circle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cirlce_id")
-    private Long circleId;
+    private long circleId;
 
     @NotBlank(message = "Circle name required")
     @Size(min = 4, max = 50, message = "A circle name needs to be between 4 and 50 characters")
@@ -66,11 +66,11 @@ public class Circle {
         this.circleName = circleName;
     }
 
-    public Long getCircleId() {
+    public long getCircleId() {
         return circleId;
     }
 
-    public void setCircleId(Long circleId) {
+    public void setCircleId(long circleId) {
         this.circleId = circleId;
     }
 

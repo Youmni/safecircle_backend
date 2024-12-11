@@ -21,12 +21,12 @@ public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alert_id")
-    private Long alertId;
+    private long alertId;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Safety Status required. Values are: SOS, UNSAFE.")
     @Column(name = "alert")
-    private SafetyStatus alert;
+    private SafetyStatus status;
 
     @NotBlank(message = "Description is required")
     @Size(min = 5, max = 40, message = "Description must be between 5 and 40 characters")
@@ -46,25 +46,39 @@ public class Alert {
     @JsonBackReference
     private Location location;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User is required")
+    private User user;
+
     @CreationTimestamp
     @Column(name = "created_at")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime creatadAt;
+    private LocalDateTime createdAt;
 
     protected Alert() {}
 
-    public Alert(SafetyStatus alert, String description) {
-        this.alert = alert;
+    public Alert(SafetyStatus status, String description, Location location) {
+        this.status = status;
         this.description = description;
+        this.location = location;
     }
 
-    public Long getAlertId() {
+    public long getAlertId() {
         return alertId;
     }
 
-    public void setAlertId(Long alertId) {
+    public void setAlertId(long alertId) {
         this.alertId = alertId;
+    }
+
+    public @NotNull(message = "Safety Status required. Values are: SOS, UNSAFE.") SafetyStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(@NotNull(message = "Safety Status required. Values are: SOS, UNSAFE.") SafetyStatus status) {
+        this.status = status;
     }
 
     public @NotBlank(message = "Description is required") @Size(min = 5, max = 40, message = "Description must be between 5 and 40 characters") String getDescription() {
@@ -75,19 +89,35 @@ public class Alert {
         this.description = description;
     }
 
-    public LocalDateTime getCreatadAt() {
-        return creatadAt;
+    public Set<CircleAlert> getCircleAlerts() {
+        return circleAlerts;
     }
 
-    public void setCreatadAt(LocalDateTime creatadAt) {
-        this.creatadAt = creatadAt;
+    public void setCircleAlerts(Set<CircleAlert> circleAlerts) {
+        this.circleAlerts = circleAlerts;
     }
 
-    public @NotNull(message = "Safety Status required. Values are: SOS, UNSAFE.") SafetyStatus getAlert() {
-        return alert;
+    public Set<UserAlert> getUserAlerts() {
+        return userAlerts;
     }
 
-    public void setAlert(@NotNull(message = "Safety Status required. Values are: SOS, UNSAFE.") SafetyStatus alert) {
-        this.alert = alert;
+    public void setUserAlerts(Set<UserAlert> userAlerts) {
+        this.userAlerts = userAlerts;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

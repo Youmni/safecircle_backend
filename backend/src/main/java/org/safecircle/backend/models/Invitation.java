@@ -9,7 +9,7 @@ import org.safecircle.backend.enums.InvitationStatus;
 public class Invitation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long invitationId;
+    private long invitationId;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "The invitation status is required. Accepted values are: ACCEPTED, DECLINED, PENDING")
@@ -35,11 +35,11 @@ public class Invitation {
         this.status = status;
     }
 
-    public Long getInvitationId() {
+    public long getInvitationId() {
         return invitationId;
     }
 
-    public void setInvitationId(Long invitationId) {
+    public void setInvitationId(long invitationId) {
         this.invitationId = invitationId;
     }
 }

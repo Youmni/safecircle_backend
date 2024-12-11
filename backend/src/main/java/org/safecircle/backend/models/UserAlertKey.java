@@ -9,15 +9,15 @@ import java.util.Objects;
 @Embeddable
 public class UserAlertKey implements Serializable {
     @Column(name = "user_id")
-    private Long userId;
+    private long userId;
 
     @Column(name = "alert_id")
-    private Long alertId;
+    private long alertId;
 
     protected UserAlertKey() {
     }
 
-    public UserAlertKey(Long userId, Long alertId) {
+    public UserAlertKey(long userId, long alertId) {
         this.userId = userId;
         this.alertId = alertId;
     }
@@ -35,19 +35,19 @@ public class UserAlertKey implements Serializable {
         return Objects.hash(userId, alertId);
     }
 
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public Long getAlertId() {
+    public long getAlertId() {
         return alertId;
     }
 
-    public void setAlertId(Long alertId) {
+    public void setAlertId(long alertId) {
         this.alertId = alertId;
     }
 }

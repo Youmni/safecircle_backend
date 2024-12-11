@@ -12,7 +12,7 @@ import org.safecircle.backend.enums.ReportStatus;
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reportId;
+    private long reportId;
 
     @NotEmpty(message = "You need to provide a subject for the report")
     @Size(min = 2, max = 40, message = "The subject needs to be between 2 and 40 characters long")
@@ -45,11 +45,11 @@ public class Report {
         this.status = status;
     }
 
-    public Long getReportId() {
+    public long getReportId() {
         return reportId;
     }
 
-    public void setReportId(Long reportId) {
+    public void setReportId(long reportId) {
         this.reportId = reportId;
     }
 

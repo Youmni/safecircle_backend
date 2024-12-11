@@ -22,7 +22,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int userId;
+    private long userId;
 
     @NotBlank
     @Size(min = 2, max = 50, message = "First name must be between 5 and 15 characters")
@@ -95,11 +95,11 @@ public class User {
         this.type = type;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

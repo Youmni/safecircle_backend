@@ -21,7 +21,7 @@ public class Blacklist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blacklist_id")
-    private Long blacklistId;
+    private long blacklistId;
 
     @NotBlank
     @Size(min = 8, max = 50, message = "Reason of the blacklist")
@@ -59,11 +59,11 @@ public class Blacklist {
         this.endDate = endDate;
     }
 
-    public Long getBlacklistId() {
+    public long getBlacklistId() {
         return blacklistId;
     }
 
-    public void setBlacklistId(Long blacklistId) {
+    public void setBlacklistId(long blacklistId) {
         this.blacklistId = blacklistId;
     }
 

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long locationId;
+    private long locationId;
 
     @NotEmpty(message = "You need to provide a latitude")
     @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90")
@@ -48,11 +48,11 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public Long getLocationId() {
+    public long getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(long locationId) {
         this.locationId = locationId;
     }
 

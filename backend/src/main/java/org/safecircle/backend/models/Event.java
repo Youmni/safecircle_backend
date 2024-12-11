@@ -23,7 +23,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+    private long eventId;
 
     @NotEmpty(message = "You need to provide an estimation of the amount of attendees")
     @Size(min = 0, message = "There must be positive amount of attendees")
@@ -75,11 +75,11 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public Long getEventId() {
+    public long getEventId() {
         return eventId;
     }
 
-    public void setEventId(Long eventId) {
+    public void setEventId(long eventId) {
         this.eventId = eventId;
     }
 
