@@ -30,7 +30,7 @@ public class Circle {
     private String circleName;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "Circle type required. Could be: REGULAR, EVENT")
+    @NotNull(message = "Circle type required. Could be: REGULAR, EVENT")
     @Column(name = "circle_type")
     private CircleType circleType;
 
@@ -82,7 +82,7 @@ public class Circle {
         this.circleName = circleName;
     }
 
-    public @NotBlank(message = "Circle type required. Could be: REGULAR, EVENT") CircleType getCircleType() {
+    public @NotNull(message = "Circle type required. Could be: REGULAR, EVENT") CircleType getCircleType() {
         return circleType;
     }
 
