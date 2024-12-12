@@ -2,8 +2,8 @@ package org.safecircle.backend.controllers;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
-import org.safecircle.backend.DTO.AuthDTO;
-import org.safecircle.backend.DTO.UserDTO;
+import org.safecircle.backend.dto.UserDTO;
+import org.safecircle.backend.dto.AuthDTO;
 import org.safecircle.backend.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
