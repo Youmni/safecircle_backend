@@ -1,7 +1,7 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
-import org.safecircle.backend.DTO.FcmTokenDTO;
+import org.safecircle.backend.dto.FcmTokenDTO;
 import org.safecircle.backend.dto.AuthDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.config.JwtService;

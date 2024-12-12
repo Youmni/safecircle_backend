@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpServletRequest;
+import org.safecircle.backend.dto.AlertDTO;
 import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.services.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class AlertController {
     }
     @CrossOrigin
     @PostMapping("/send")
-    public ResponseEntity<String> SendAlert(@RequestBody Alert alert) {
+    public ResponseEntity<String> SendAlert(@RequestBody AlertDTO alert) {
         return alertService.sendAlert(alert);
     }
 

@@ -4,14 +4,16 @@ package org.safecircle.backend.dto;
 import org.safecircle.backend.enums.SafetyStatus;
 import org.safecircle.backend.models.Location;
 
+import java.math.BigDecimal;
+
 public class AlertDTO {
 
     private SafetyStatus status;
     private String description;
-    private Location location;
+    private LocationDTO location;
     private long userId;
 
-    public AlertDTO(SafetyStatus status, String description, Location location, long userId) {
+    public AlertDTO(SafetyStatus status, String description, LocationDTO location, long userId) {
         this.status = status;
         this.description = description;
         this.location = location;
@@ -34,19 +36,19 @@ public class AlertDTO {
         this.description = description;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public long getUserId() {
         return userId;
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public LocationDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationDTO location) {
+        this.location = location;
     }
 }

@@ -71,7 +71,7 @@ public class User {
     @JsonBackReference
     Set<CircleUser> circleUsers;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "location_id")
     @JsonBackReference
     private Location location;

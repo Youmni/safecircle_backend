@@ -3,6 +3,7 @@ package org.safecircle.backend.services;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import org.safecircle.backend.dto.AlertDTO;
 import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.UserRepository;
@@ -12,19 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 @Service
 public class AlertService {
-    private LocationService locationService;
-    private UserRepository userRepository;
+    private final LocationService locationService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserRepository getUserRepository(UserRepository userRepository) {
-        return this.userRepository;
-    }
-    @Autowired
-    public LocationService getLocationService(LocationService locationService) {
-        return locationService;
+    public AlertService(UserRepository userRepository, LocationService locationService) {
+        this.userRepository = userRepository;
+        this.locationService = locationService;
     }
 
     public void sendNotification(String title, String body, BigDecimal latitude, BigDecimal longitude, String token) {
@@ -44,14 +41,14 @@ public class AlertService {
             e.printStackTrace();
         }
     }
-    public ResponseEntity<String> sendAlert(Alert alert) {
 
-        List<User> users = userRepository.findAll();
+    public ResponseEntity<String> sendAlert(AlertDTO alert) {
+        List<User> users = userRepository.findAllByLocationIsNotNull();
 
         for (User user : users) {
             BigDecimal distance = locationService.calculateDistance(
-                    alert.getLocation().getLatitude(),
-                    alert.getLocation().getLongitude(),
+                    alert.getLocation().latitude(),
+                    alert.getLocation().longitude(),
                     user.getLocation().getLatitude(),
                     user.getLocation().getLongitude()
             );
@@ -60,8 +57,8 @@ public class AlertService {
                 sendNotification(
                         "Emergency Alert: " + alert.getStatus(),
                         alert.getDescription(),
-                        alert.getLocation().getLatitude(),
-                        alert.getLocation().getLongitude(),
+                        alert.getLocation().latitude(),
+                        alert.getLocation().longitude(),
                         user.getFcmToken()
                 );
             }

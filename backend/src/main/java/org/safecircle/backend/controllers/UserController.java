@@ -2,7 +2,7 @@ package org.safecircle.backend.controllers;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
-import org.safecircle.backend.DTO.FcmTokenDTO;
+import org.safecircle.backend.dto.FcmTokenDTO;
 import org.safecircle.backend.dto.AuthDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.models.User;
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @CrossOrigin
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         if (firstName == null || lastName == null) {
             return ResponseEntity.badRequest().body(Collections.emptyList());

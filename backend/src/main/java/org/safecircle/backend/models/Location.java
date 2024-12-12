@@ -1,14 +1,13 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,12 +24,15 @@ public class Location {
     private long locationId;
 
     @NotNull(message = "You need to provide a latitude")
-    @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90")
+    @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90")
+    @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90")
     private BigDecimal latitude;
 
     @NotNull(message = "You need to provide a longitude")
-    @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90")
+    @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90")
+    @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90")
     private BigDecimal longitude;
+
 
     @CreationTimestamp
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -42,9 +44,10 @@ public class Location {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "location")
-    @JsonBackReference("alert-location")
-    private List<Alert> alerts;
+    @OneToOne(mappedBy = "location")
+    @JsonManagedReference("alert-location")
+    private Alert alert;
+
 
     protected Location() {
     }
@@ -62,12 +65,20 @@ public class Location {
         this.locationId = locationId;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public @NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal getLongitude() {
+        return longitude;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setLongitude(@NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public @NotNull(message = "You need to provide a latitude") @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90") BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(@NotNull(message = "You need to provide a latitude") @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90") BigDecimal latitude) {
+        this.latitude = latitude;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -78,19 +89,19 @@ public class Location {
         this.createdAt = createdAt;
     }
 
-    public @NotEmpty(message = "You need to provide a longitude") @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90") BigDecimal getLongitude() {
-        return longitude;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setLongitude(@NotEmpty(message = "You need to provide a longitude") @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90") BigDecimal longitude) {
-        this.longitude = longitude;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public @NotEmpty(message = "You need to provide a latitude") @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90") BigDecimal getLatitude() {
-        return latitude;
+    public Alert getAlert() {
+        return alert;
     }
 
-    public void setLatitude(@NotEmpty(message = "You need to provide a latitude") @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90") BigDecimal latitude) {
-        this.latitude = latitude;
+    public void setAlert(Alert alert) {
+        this.alert = alert;
     }
 }
