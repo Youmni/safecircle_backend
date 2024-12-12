@@ -212,6 +212,10 @@ public class UserService {
         return userRepository.existsByUserId(userId);
     }
 
+    public boolean isUserValidByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
+
     public boolean isAdmin(long userId){
         if(!userRepository.existsByUserId(userId)){
             return false;

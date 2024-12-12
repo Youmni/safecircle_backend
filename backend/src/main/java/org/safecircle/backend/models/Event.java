@@ -22,8 +22,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long eventId;
 
-    @NotEmpty(message = "You need to provide an estimation of the amount of attendees")
-    @Size(min = 0, message = "There must be positive amount of attendees")
+    @NotNull(message = "You need to provide an estimation of the amount of attendees")
+    @Min(value = 0, message = "There must be positive amount of attendees")
     private int userCountEstimate;
 
     @NotEmpty(message = "You need to provide an email of the coordinator of the event")
@@ -47,7 +47,7 @@ public class Event {
     private LocalDate endDate;
 
     @ManyToOne
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(name = "location_id")
     @JsonBackReference
     private Location location;
 
@@ -88,6 +88,14 @@ public class Event {
         this.updatedAt = updatedAt;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -96,19 +104,19 @@ public class Event {
         this.createdAt = createdAt;
     }
 
-    public @NotEmpty(message = "You need to provide a end time for the event") @Future(message = "The end date needs to be in the future") LocalDate getEndDate() {
+    public @NotNull(message = "You need to provide a end time for the event") @Future(message = "The end date needs to be in the future") LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@NotEmpty(message = "You need to provide a end time for the event") @Future(message = "The end date needs to be in the future") LocalDate endDate) {
+    public void setEndDate(@NotNull(message = "You need to provide a end time for the event") @Future(message = "The end date needs to be in the future") LocalDate endDate) {
         this.endDate = endDate;
     }
 
-    public @NotEmpty(message = "You need to provide a start time for the event") @Future(message = "The start date needs to be in the future") LocalDate getStartDate() {
+    public @NotNull(message = "You need to provide a start time for the event") @Future(message = "The start date needs to be in the future") LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@NotEmpty(message = "You need to provide a start time for the event") @Future(message = "The start date needs to be in the future") LocalDate startDate) {
+    public void setStartDate(@NotNull(message = "You need to provide a start time for the event") @Future(message = "The start date needs to be in the future") LocalDate startDate) {
         this.startDate = startDate;
     }
 
@@ -128,13 +136,13 @@ public class Event {
         this.email = email;
     }
 
-    @NotEmpty(message = "You need to provide an estimation of the amount of attendees")
-    @Size(min = 0, message = "There must be positive amount of attendees")
+    @NotNull(message = "You need to provide an estimation of the amount of attendees")
+    @Min(value = 0, message = "There must be positive amount of attendees")
     public int getUserCountEstimate() {
         return userCountEstimate;
     }
 
-    public void setUserCountEstimate(@NotEmpty(message = "You need to provide an estimation of the amount of attendees") @Size(min = 0, message = "There must be positive amount of attendees") int userCountEstimate) {
+    public void setUserCountEstimate(@NotNull(message = "You need to provide an estimation of the amount of attendees")     @Min(value = 0, message = "There must be positive amount of attendees") int userCountEstimate) {
         this.userCountEstimate = userCountEstimate;
     }
 }
