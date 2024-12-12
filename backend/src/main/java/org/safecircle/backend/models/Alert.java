@@ -34,16 +34,16 @@ public class Alert {
     private String description;
 
     @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("circle-alert")
     Set<CircleAlert> circleAlerts;
 
     @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("user-alert")
     Set<UserAlert> userAlerts;
 
     @ManyToOne
     @JoinColumn(name = "location", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("alert-location")
     private Location location;
 
     @ManyToOne

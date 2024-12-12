@@ -1,56 +1,74 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.AlertDTO;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.models.User;
-import org.safecircle.backend.models.UserAlert;
-import org.safecircle.backend.models.UserAlertKey;
-import org.safecircle.backend.repositories.UserAlertRepository;
-import org.springframework.http.HttpStatus;
+import org.safecircle.backend.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Service
 public class AlertService {
+    private LocationService locationService;
+    private UserRepository userRepository;
 
-    private final UserService userService;
-    private final UserAlertRepository userAlertRepository;
-
-    public AlertService(UserService userService, UserAlertRepository userAlertRepository) {
-        this.userService = userService;
-        this.userAlertRepository = userAlertRepository;
+    @Autowired
+    public UserRepository getUserRepository(UserRepository userRepository) {
+        return this.userRepository;
+    }
+    @Autowired
+    public LocationService getLocationService(LocationService locationService) {
+        return locationService;
     }
 
-    public ResponseEntity<String> createAlert(AlertDTO alertDto) {
-        try{
+    public void sendNotification(String title, String body, BigDecimal latitude, BigDecimal longitude, String token) {
+        try {
+            Message message = Message.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .putData("latitude", String.valueOf(latitude))
+                    .putData("longitude", String.valueOf(longitude))
+                    .setToken(token)
+                    .build();
 
-            if(userService.isUserValid(alertDto.getUserId())){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-            User user = userService.getUserById(alertDto.getUserId());
-
-            Alert alert = new Alert(
-                alertDto.getStatus(),
-                alertDto.getDescription(),
-                alertDto.getLocation()
-            );
-
-            UserAlert userAlert = new UserAlert(
-                    user,
-                    alert
-            );
-            UserAlertKey key = new UserAlertKey(
-                    user.getUserId(), alert.getAlertId()
-            );
-            userAlert.setId(key);
-            userAlertRepository.save(userAlert);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Alert created for user");
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            FirebaseMessaging.getInstance().send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-//    public ResponseEntity<String> stopAlert(long userId, long alertId) {
-//
-//    }
+    public ResponseEntity<String> sendAlert(Alert alert) {
+
+        // Fetch all active users from the database
+        List<User> users = userRepository.findAll();
+
+        // Check if users are within 2km range
+        for (User user : users) {
+            BigDecimal distance = locationService.calculateDistance(
+                    alert.getLocation().getLatitude(),
+                    alert.getLocation().getLongitude(),
+                    user.getLocation().getLatitude(),
+                    user.getLocation().getLongitude()
+            );
+            BigDecimal maxDistance = new BigDecimal("2.0");
+            if (distance.compareTo(maxDistance) <= 0 && user.getFcmToken() != null) {
+                sendNotification(
+                        "Emergency Alert: " + alert.getStatus(),
+                        alert.getDescription(),
+                        alert.getLocation().getLatitude(),
+                        alert.getLocation().getLongitude(),
+                        user.getFcmToken()  // FCM token sent here
+                );
+            }
+        }
+
+        return ResponseEntity.ok().body("Notifications sent to users within 2km range.");
+    }
 }

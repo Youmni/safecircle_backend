@@ -2,6 +2,7 @@ package org.safecircle.backend.controllers;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
+import org.safecircle.backend.DTO.FcmTokenDTO;
 import org.safecircle.backend.dto.AuthDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.models.User;
@@ -86,4 +87,10 @@ public class UserController {
         List<User> users = userService.getUserByFirstnameAndLastnameContaining(firstName, lastName);
         return ResponseEntity.ok(users);
     }
+    @CrossOrigin
+    @PostMapping("/register-tokens")
+    public ResponseEntity<String> registerFcmTokens(@RequestBody FcmTokenDTO fcmTokenDTO) {
+        return userService.registerFcmToken(fcmTokenDTO);
+    }
+
 }

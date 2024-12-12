@@ -1,5 +1,6 @@
 package org.safecircle.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Location {
@@ -39,6 +41,10 @@ public class Location {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "location")
+    @JsonBackReference("alert-location")
+    private List<Alert> alerts;
 
     protected Location() {
     }

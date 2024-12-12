@@ -47,6 +47,9 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "fcmToken")
+    private String fcmToken;
+
     @Enumerated(EnumType.STRING)
     @NotNull(message = "UserType must be specified and should be either ADMIN or USER")
     private UserType type;
@@ -214,5 +217,13 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

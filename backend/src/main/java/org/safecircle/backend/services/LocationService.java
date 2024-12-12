@@ -1,12 +1,20 @@
 package org.safecircle.backend.services;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.models.Location;
+import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.LocationRepository;
+import org.safecircle.backend.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.List;
 
 @Service
 public class LocationService {
@@ -86,3 +94,4 @@ public class LocationService {
     }
 
 }
+

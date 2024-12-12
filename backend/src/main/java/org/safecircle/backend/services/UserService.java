@@ -1,6 +1,7 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
+import org.safecircle.backend.DTO.FcmTokenDTO;
 import org.safecircle.backend.dto.AuthDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.config.JwtService;
@@ -207,6 +208,22 @@ public class UserService {
         users.addAll(userRepository.findByLastNameContainingIgnoreCase(lastName));
         return new ArrayList<>(users);
     }
+
+    public ResponseEntity<String> registerFcmToken(FcmTokenDTO fcmTokenDTO) {
+            List<User> users = userRepository.findByEmail(fcmTokenDTO.getEmail());
+
+            if (!users.isEmpty()) {
+                for (User user : users) {
+                    user.setFcmToken(fcmTokenDTO.getFcmToken());
+                    userRepository.save(user);
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User with email " + fcmTokenDTO.getEmail() + " not found!");
+            }
+        return ResponseEntity.ok("FCM Tokens registered successfully!");
+    }
+
 
     public boolean isUserValid(long userId){
         return userRepository.existsByUserId(userId);
