@@ -46,10 +46,8 @@ public class AlertService {
     }
     public ResponseEntity<String> sendAlert(Alert alert) {
 
-        // Fetch all active users from the database
         List<User> users = userRepository.findAll();
 
-        // Check if users are within 2km range
         for (User user : users) {
             BigDecimal distance = locationService.calculateDistance(
                     alert.getLocation().getLatitude(),
@@ -64,7 +62,7 @@ public class AlertService {
                         alert.getDescription(),
                         alert.getLocation().getLatitude(),
                         alert.getLocation().getLongitude(),
-                        user.getFcmToken()  // FCM token sent here
+                        user.getFcmToken()
                 );
             }
         }
