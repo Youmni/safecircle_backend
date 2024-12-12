@@ -8,10 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -37,20 +34,20 @@ public class Event {
     @Size(min = 2, max = 50, message = "The event name needs to be between 2 and 50 characters long")
     private String eventName;
 
-    @NotEmpty(message = "You need to provide a start time for the event")
+    @NotNull(message = "You need to provide a start time for the event")
     @Future(message = "The start date needs to be in the future")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate startDate;
 
-    @NotEmpty(message = "You need to provide a end time for the event")
+    @NotNull(message = "You need to provide a end time for the event")
     @Future(message = "The end date needs to be in the future")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate;
 
     @ManyToOne
-    @JoinColumn(name = "location", nullable = false)
+    @JoinColumn(name = "location_id", nullable = false)
     @JsonBackReference
     private Location location;
 

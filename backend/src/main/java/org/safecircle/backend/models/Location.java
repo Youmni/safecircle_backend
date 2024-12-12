@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,13 +18,14 @@ import java.time.LocalDateTime;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
     private long locationId;
 
-    @NotEmpty(message = "You need to provide a latitude")
+    @NotNull(message = "You need to provide a latitude")
     @Size(min = -90, max = 90, message = "The latitude cannot be bigger than 90 or smaller than -90")
     private BigDecimal latitude;
 
-    @NotEmpty(message = "You need to provide a longitude")
+    @NotNull(message = "You need to provide a longitude")
     @Size(min = -90, max = 90, message = "The longitude cannot be bigger than 90 or smaller than -90")
     private BigDecimal longitude;
 

@@ -10,6 +10,7 @@ import org.safecircle.backend.models.Location;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.models.UserAlert;
 import org.safecircle.backend.repositories.CircleUserRepository;
+import org.safecircle.backend.repositories.LocationRepository;
 import org.safecircle.backend.repositories.UserAlertRepository;
 import org.safecircle.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -44,6 +44,8 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -156,6 +158,23 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
     }
 
+    public ResponseEntity<String> updateLocation(long userId, double latitude, double longitude) {
+        try {
+            if (!isUserValid(userId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
+            }
+            User user = getUserById(userId);
+            Location location = user.getLocation();
+            location.setLatitude(BigDecimal.valueOf(latitude));
+            location.setLongitude(BigDecimal.valueOf(longitude));
+
+            locationRepository.save(location);
+            return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: could not update user location");
+        }
+    }
+
     public ResponseEntity<String> deleteUser(long userId) {
         if(!isUserValid(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
@@ -172,6 +191,21 @@ public class UserService {
 
     public User getUserById(long userId){
             return userRepository.findById(userId).orElse(null);
+    }
+
+    public List<User> getUserByFirstNameContaining(String firstName){
+        return userRepository.findByFirstNameContainingIgnoreCase(firstName);
+    }
+
+    public List<User> getUserByLastNameContaining(String lastName){
+        return userRepository.findByLastNameContainingIgnoreCase(lastName);
+    }
+
+    public List<User> getUserByFirstnameAndLastnameContaining(String firstName, String lastName){
+        Set<User> users = new HashSet<>();
+        users.addAll(userRepository.findByFirstNameContainingIgnoreCase(firstName));
+        users.addAll(userRepository.findByLastNameContainingIgnoreCase(lastName));
+        return new ArrayList<>(users);
     }
 
     public boolean isUserValid(long userId){
