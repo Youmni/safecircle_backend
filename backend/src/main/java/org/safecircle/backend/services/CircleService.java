@@ -13,23 +13,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CircleService {
     private final UserService userService;
+    private final CircleUserService circleUserService;
     private CircleRepository circleRepository;
     private UserRepository userRepository;
     private CircleUserRepository circleUserRepository;
     private CircleAlertRepository circleAlertRepository;
 
     @Autowired
-    public CircleService(CircleRepository circleRepository, UserRepository userRepository, CircleUserRepository circleUserRepository, CircleAlertRepository circleAlertRepository, UserService userService) {
+    public CircleService(CircleRepository circleRepository, UserRepository userRepository, CircleUserRepository circleUserRepository, CircleAlertRepository circleAlertRepository, UserService userService, CircleUserService circleUserService) {
         this.circleRepository = circleRepository;
         this.userRepository = userRepository;
         this.circleUserRepository = circleUserRepository;
         this.circleAlertRepository = circleAlertRepository;
         this.userService = userService;
+        this.circleUserService = circleUserService;
     }
 
     public User getUserById(long userId) {
@@ -40,14 +41,10 @@ public class CircleService {
     }
 
     public Circle getCircleById(long circleId) {
-        if(!isCircleAvailable(circleId)) {
+        if(!isCircleValid(circleId)) {
             throw new EntityNotFoundException("Circle not found");
         }
         return circleRepository.findByCircleId(circleId).getFirst();
-    }
-
-    public boolean isCircleAvailable(long circleId) {
-        return circleRepository.existsByCircleId(circleId);
     }
 
     public ResponseEntity<String> addUserById(long circleId, long userId) {
@@ -66,11 +63,52 @@ public class CircleService {
         }
     }
 
+    public ResponseEntity<String> addUsersToCircle(long circleId, List<Long> userIds) {
+        if(!isCircleValid(circleId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not found");
+        }
+        if(!userService.isValidUserIds(userIds)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is an invalid user ID");
+        }
+
+        for(Long userId : userIds) {
+            if (!isUserInCircle(circleId, userId)) {
+                addUserToCircleCheck(circleId, userId);
+            }else{
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("The user(s) were already in the circle");
+            }
+        }
+        return ResponseEntity.ok("Successfully added users to the circle");
+    }
+
+    public void addUserToCircleCheck(long circleId, long userId) {
+        if(!isCircleValid(circleId)){
+            return;
+        }
+        if(!userService.isUserValid(userId)){
+            return;
+        }
+
+        Circle circle = getCircleById(circleId);
+        User user = userService.getUserById(userId);
+
+        CircleUserKey key = new CircleUserKey(circleId, userId);
+        CircleUser circleUser = new CircleUser(circle, user);
+        circleUser.setId(key);
+        circleUserRepository.save(circleUser);
+        circleUserRepository.flush();
+    }
+
     public ResponseEntity<String> removeUserById(long circleId, long userId) {
         try{
             Circle circle = getCircleById(circleId);
             User user = getUserById(userId);
             List<CircleUser> circleUserList = circleUserRepository.findByUserAndCircle(user, circle);
+            if (circleUserList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User not found in the circle");
+            }
             circleUserRepository.delete(circleUserList.getFirst());
             return ResponseEntity.ok("Successfully removed user from circle");
         } catch (Exception e) {
@@ -79,14 +117,14 @@ public class CircleService {
         }
     }
 
-    public ResponseEntity<String> createCircle(CircleDTO circleDTO) {
+    public ResponseEntity<String> createCircle(long userId, CircleDTO circleDTO) {
         try {
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
-            circleRepository.save(circle);
+             circle = circleRepository.save(circle);
+            addUserToCircleCheck(circle.getCircleId(), userId);
 
             return ResponseEntity.ok("Successfully created circle");
         } catch (Exception e) {
-            e.printStackTrace();  // Dit logt de volledige fout naar de console
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("There was an error creating the Circle");
         }
@@ -109,7 +147,12 @@ public class CircleService {
 
     public ResponseEntity<String> deleteCircle(long circleId) {
         try{
+            if (!circleRepository.existsByCircleId(circleId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Circle with ID " + circleId + " not found.");
+            }
             Circle circle = getCircleById(circleId);
+
             List<CircleUser> circleUserList = circleUserRepository.findByCircle(circle);
             if(!circleUserList.isEmpty()){
                 circleUserRepository.deleteAll(circleUserList);
@@ -125,4 +168,16 @@ public class CircleService {
                     .body("There was an error deleting the Circle");
         }
     }
+
+    public boolean isCircleValid(long circleId) {
+        return circleRepository.existsByCircleId(circleId);
+    }
+
+    public boolean isUserInCircle(long circleId, long userId) {
+        Circle circle = getCircleById(circleId);
+        User user = getUserById(userId);
+        List<CircleUser> circleUserList = circleUserRepository.findByUserAndCircle(user, circle);
+        return !circleUserList.isEmpty();
+    }
+
 }

@@ -224,6 +224,15 @@ public class UserService {
         return UserType.ADMIN.equals(role);
     }
 
+    public boolean isValidUserIds(List<Long> userIds){
+        for(Long userId : userIds){
+            if(!isUserValid(userId)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isValidEmail(String email) {
         if (email == null || email.isEmpty()) {
             return false;
