@@ -214,7 +214,7 @@ public class UserService {
 
             if (!users.isEmpty()) {
                 for (User user : users) {
-                    user.setFcmToken(fcmTokenDTO.getFcmToken());
+                    fcmTokenDTO.setFcmToken(fcmTokenDTO.getFcmToken());
                     userRepository.save(user);
                 }
             } else {

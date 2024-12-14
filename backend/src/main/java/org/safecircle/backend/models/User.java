@@ -1,6 +1,7 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -47,9 +48,6 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "fcmToken")
-    private String fcmToken;
-
     @Enumerated(EnumType.STRING)
     @NotNull(message = "UserType must be specified and should be either ADMIN or USER")
     private UserType type;
@@ -64,17 +62,21 @@ public class User {
     private Set<Report> reports;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("user-alert")
     Set<UserAlert> userAlerts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("circle-user")
     Set<CircleUser> circleUsers;
 
     @OneToOne
     @JoinColumn(name = "location_id")
-    @JsonBackReference
+    @JsonManagedReference ("user-location")
     private Location location;
+
+    @OneToMany
+    @JsonManagedReference ("fcmToken-user")
+    private Set<FcmToken> fcmTokens;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -219,11 +221,4 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public String getFcmToken() {
-        return fcmToken;
-    }
-
-    public void setFcmToken(String fcmToken) {
-        this.fcmToken = fcmToken;
-    }
 }
