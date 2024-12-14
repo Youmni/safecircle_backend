@@ -5,11 +5,14 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import org.safecircle.backend.dto.AlertDTO;
 import org.safecircle.backend.models.Alert;
+import org.safecircle.backend.models.FcmToken;
 import org.safecircle.backend.models.User;
+import org.safecircle.backend.repositories.FcmTokenRepository;
 import org.safecircle.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.safecircle.backend.dto.FcmTokenDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,11 +20,15 @@ import java.util.List;
 public class AlertService {
     private final LocationService locationService;
     private final UserRepository userRepository;
+    private final FcmTokenRepository fcmTokenRepository;
+    private FcmTokenDTO fcmTokenDTO;
+    private FcmToken fcmToken;
 
     @Autowired
-    public AlertService(UserRepository userRepository, LocationService locationService) {
+    public AlertService(UserRepository userRepository, LocationService locationService, FcmTokenRepository fcmTokenRepository) {
         this.userRepository = userRepository;
         this.locationService = locationService;
+        this.fcmTokenRepository = fcmTokenRepository;
     }
 
     public void sendNotification(String title, String body, BigDecimal latitude, BigDecimal longitude, String token) {
@@ -53,13 +60,13 @@ public class AlertService {
                     user.getLocation().getLongitude()
             );
             BigDecimal maxDistance = new BigDecimal("2.0");
-            if (distance.compareTo(maxDistance) <= 0 && user.getFcmToken() != null) {
+            if (distance.compareTo(maxDistance) <= 0 && fcmTokenRepository.findByUserAndFcmTokenId(user, fcmToken.getFcmTokenId()) != null) {
                 sendNotification(
                         "Emergency Alert: " + alert.getStatus(),
                         alert.getDescription(),
                         alert.getLocation().latitude(),
                         alert.getLocation().longitude(),
-                        user.getFcmToken()
+                        fcmTokenDTO.getFcmToken()
                 );
             }
         }
