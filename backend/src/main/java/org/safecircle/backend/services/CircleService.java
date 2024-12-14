@@ -1,6 +1,7 @@
 package org.safecircle.backend.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.safecircle.backend.dto.CircleDTO;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
@@ -41,26 +42,7 @@ public class CircleService {
     }
 
     public Circle getCircleById(long circleId) {
-        if(!isCircleValid(circleId)) {
-            throw new EntityNotFoundException("Circle not found");
-        }
-        return circleRepository.findByCircleId(circleId).getFirst();
-    }
-
-    public ResponseEntity<String> addUserById(long circleId, long userId) {
-        try{
-            Circle circle = getCircleById(circleId);
-            User user = getUserById(userId);
-            CircleUserKey circleUserkey = new CircleUserKey(circleId, userId);
-            CircleUser circleUser = new CircleUser(circle, user);
-            circleUser = circleUserRepository.save(circleUser);
-            circleUser.setId(circleUserkey);
-            circleUserRepository.save(circleUser);
-            return ResponseEntity.ok("Successfully added user to circle");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("There was an error creating the Circle");
-        }
+        return circleRepository.findById(circleId).orElse(null);
     }
 
     public ResponseEntity<String> addUsersToCircle(long circleId, List<Long> userIds) {
@@ -102,6 +84,12 @@ public class CircleService {
 
     public ResponseEntity<String> removeUserById(long circleId, long userId) {
         try{
+            if(!isCircleValid(circleId)){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not found");
+            }
+            if(!userService.isUserValid(userId)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+            }
             Circle circle = getCircleById(circleId);
             User user = getUserById(userId);
             List<CircleUser> circleUserList = circleUserRepository.findByUserAndCircle(user, circle);
@@ -117,10 +105,14 @@ public class CircleService {
         }
     }
 
-    public ResponseEntity<String> createCircle(long userId, CircleDTO circleDTO) {
+    public ResponseEntity<String> createCircle(long userId, @Valid CircleDTO circleDTO) {
         try {
+            if(!userService.isUserValid(userId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
-             circle = circleRepository.save(circle);
+
+            circleRepository.save(circle);
             addUserToCircleCheck(circle.getCircleId(), userId);
 
             return ResponseEntity.ok("Successfully created circle");
@@ -132,6 +124,9 @@ public class CircleService {
 
     public ResponseEntity<String> updateCircle(long circleId, CircleDTO circleDTO) {
         try{
+            if(!circleRepository.existsByCircleId(circleId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not found");
+            }
             Circle circle = getCircleById(circleId);
             circle.setCircleType(circleDTO.getCircleType());
             circle.setAvailable(circleDTO.isAvailable());

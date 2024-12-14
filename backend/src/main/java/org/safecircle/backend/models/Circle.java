@@ -34,7 +34,7 @@ public class Circle {
     @Column(name = "circle_type")
     private CircleType circleType;
 
-    @NotNull(message = "Availibilty should not be null")
+    //@NotNull(message = "Availibilty should not be null")
     @Column(name = "is_available")
     private boolean isAvailable;
 
@@ -90,12 +90,13 @@ public class Circle {
         this.circleType = circleType;
     }
 
-    @NotNull(message = "Availibilty should not be null")
+    //@NotNull(message = "Availibilty should not be null")
     public boolean isAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(@NotNull(message = "Availibilty should not be null") boolean available) {
+    public void setAvailable(//@NotNull(message = "Availibilty should not be null")
+                             boolean available) {
         isAvailable = available;
     }
 

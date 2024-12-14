@@ -26,8 +26,8 @@ public class CircleController {
 
     @CrossOrigin
     @PostMapping(value = "/{userId}/create")
-    public ResponseEntity<String> createCircle(@PathVariable long userId, @Valid @RequestBody CircleDTO circleDTO) {
-        return circleService.createCircle(userId, circleDTO);
+    public ResponseEntity<String> createCircle(@PathVariable long userId, @Valid @RequestBody CircleDTO circle) {
+        return circleService.createCircle(userId, circle);
     }
 
     @CrossOrigin
@@ -37,7 +37,7 @@ public class CircleController {
     }
 
     @CrossOrigin
-    @DeleteMapping(value = "/{circleId}/remove")
+    @DeleteMapping(value = "/{circleId}/delete")
     public ResponseEntity<String> deleteCircle(@PathVariable long circleId) {
         return circleService.deleteCircle(circleId);
     }
@@ -49,7 +49,7 @@ public class CircleController {
     }
 
     @CrossOrigin
-    @PostMapping(value = "/{circleId}/addUsers/{userIds}")
+    @PostMapping(value = "/{circleId}/add/{userIds}")
     public ResponseEntity<String> addUserByIds(@PathVariable long circleId, @PathVariable List<Long> userIds) {
         return circleService.addUsersToCircle(circleId, userIds);
     }
