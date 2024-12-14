@@ -26,11 +26,13 @@ public class Location {
     @NotNull(message = "You need to provide a latitude")
     @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90")
     @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90")
+    @Column(precision = 10, scale = 7)
     private BigDecimal latitude;
 
     @NotNull(message = "You need to provide a longitude")
     @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90")
     @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90")
+    @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
 
@@ -49,7 +51,7 @@ public class Location {
     private Alert alert;
 
 
-    protected Location() {
+    public Location() {
     }
 
     public Location(BigDecimal latitude, BigDecimal longitude) {
@@ -65,20 +67,20 @@ public class Location {
         this.locationId = locationId;
     }
 
-    public @NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(@NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal longitude) {
-        this.longitude = longitude;
-    }
-
     public @NotNull(message = "You need to provide a latitude") @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90") BigDecimal getLatitude() {
         return latitude;
     }
 
     public void setLatitude(@NotNull(message = "You need to provide a latitude") @DecimalMin(value = "-90", message = "Latitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Latitude cannot be bigger than 90") BigDecimal latitude) {
         this.latitude = latitude;
+    }
+
+    public @NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(@NotNull(message = "You need to provide a longitude") @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90") @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90") BigDecimal longitude) {
+        this.longitude = longitude;
     }
 
     public LocalDateTime getCreatedAt() {

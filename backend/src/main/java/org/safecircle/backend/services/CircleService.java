@@ -117,12 +117,12 @@ public class CircleService {
         }
     }
 
-    public ResponseEntity<String> createCircle(long userId, @Valid CircleDTO circleDTO) {
+    public ResponseEntity<String> createCircle(long userId, CircleDTO circleDTO) {
         try {
             if(!userService.isUserValid(userId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
-            List<Circle> listCircles = (List<Circle>) getCirclesByUserId(userId);
+            List<Circle> listCircles = getCirclesByUserId(userId);
             int numberOfRegularCircles = 0;
             for(Circle circle : listCircles) {
                 if (circle.getCircleType() == CircleType.REGULAR){
@@ -132,16 +132,16 @@ public class CircleService {
             if (numberOfRegularCircles >= 5) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("The User already has 5 Circles");
             }
-
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
 
+            System.out.println(circleDTO.getCircleName());
             circleRepository.save(circle);
             addUserToCircleCheck(circle.getCircleId(), userId);
 
             return ResponseEntity.ok("Successfully created circle");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("There was an error creating the Circle");
+                    .body("There was an error creating the Circle"+ e.getMessage());
         }
     }
 
@@ -198,4 +198,12 @@ public class CircleService {
         return !circleUserList.isEmpty();
     }
 
+    public boolean isUserInCircles(long userId, List<Long> circles){
+        for(long circle : circles){
+            if(!isUserInCircle(circle, userId)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

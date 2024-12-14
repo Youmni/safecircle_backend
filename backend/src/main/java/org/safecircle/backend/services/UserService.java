@@ -80,7 +80,6 @@ public class UserService {
                     UserType.USER
                     );
 
-
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(USER_CREATED);
         }catch(Exception e){
@@ -164,12 +163,23 @@ public class UserService {
             if (!isUserValid(userId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
             }
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid latitude or longitude values.");
+            }
+
             User user = getUserById(userId);
             Location location = user.getLocation();
+
+            if(location == null){
+                System.out.println("here");
+                location = new Location();
+            }
+
             location.setLatitude(BigDecimal.valueOf(latitude));
             location.setLongitude(BigDecimal.valueOf(longitude));
+            user.setLocation(location);
 
-            locationRepository.save(location);
+            userRepository.save(user);
             return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: could not update user location");

@@ -69,12 +69,12 @@ public class User {
     @JsonBackReference("circle-user")
     Set<CircleUser> circleUsers;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "location_id")
-    @JsonManagedReference ("user-location")
+    @JsonManagedReference
     private Location location;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference ("fcmToken-user")
     private Set<FcmToken> fcmTokens;
 

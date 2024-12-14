@@ -88,9 +88,17 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
     @CrossOrigin
-    @PostMapping("/register-tokens")
+    @PostMapping("/register-token")
     public ResponseEntity<String> registerFcmTokens(@RequestBody FcmTokenDTO fcmTokenDTO) {
         return userService.registerFcmToken(fcmTokenDTO);
     }
 
+    @PutMapping("/location/{userId}")
+    public ResponseEntity<String> updateUserLocation(
+            @PathVariable long userId,
+            @RequestParam double latitude,
+            @RequestParam double longitude
+    ) {
+        return userService.updateLocation(userId, latitude, longitude);
+    }
 }

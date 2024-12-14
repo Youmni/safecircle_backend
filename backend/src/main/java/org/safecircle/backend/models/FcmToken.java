@@ -1,26 +1,28 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 @Entity
+@Table(name = "fcm_token")
 public class FcmToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fcmToken_Id")
+    @Column(name = "fcm_token_id")
     private long fcmTokenId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull(message = "User is required")
-    @JsonBackReference("fcmToken-user")
+    @JsonManagedReference("fcmToken-user")
     private User user;
 
-    @Column(name = "fcmToken")
+    @Column(name = "fcm_token")
     private String fcmToken;
 
     protected FcmToken() {}

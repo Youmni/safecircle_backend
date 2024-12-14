@@ -9,6 +9,7 @@ import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.LocationRepository;
 import org.safecircle.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,12 +28,8 @@ public class LocationService {
         this.locationRepository = locationRepository;
     }
 
-    /**
-     * Bereken de afstand tussen twee locaties in kilometers met BigDecimal.
-     */
     public BigDecimal calculateDistance(BigDecimal latitude1, BigDecimal longitude1,
                                         BigDecimal latitude2, BigDecimal longitude2) {
-        // Converteer graden naar radialen
         BigDecimal latDistance = toRadians(latitude2.subtract(latitude1));
         BigDecimal lonDistance = toRadians(longitude2.subtract(longitude1));
 
@@ -70,13 +67,11 @@ public class LocationService {
     }
 
     public BigDecimal getDistanceFromLocation(long locationId, BigDecimal targetLatitude, BigDecimal targetLongitude) {
-        // Haal de locatie op
         Location location = getLocationById(locationId);
         if (location == null) {
             throw new RuntimeException("Location not found for ID: " + locationId);
         }
 
-        // Bereken de afstand
         return calculateDistance(
                 location.getLatitude(), location.getLongitude(), targetLatitude, targetLongitude
         );
