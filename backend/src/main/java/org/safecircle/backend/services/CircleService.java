@@ -3,6 +3,7 @@ package org.safecircle.backend.services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.CircleDTO;
+import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
 import org.safecircle.backend.repositories.CircleRepository;
@@ -13,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CircleService {
@@ -36,13 +39,22 @@ public class CircleService {
 
     public User getUserById(long userId) {
         if(!userService.isUserValid(userId)) {
-            throw new EntityNotFoundException("User not found");
+            return null;
         }
         return userRepository.findByUserId(userId).getFirst();
     }
 
     public Circle getCircleById(long circleId) {
         return circleRepository.findById(circleId).orElse(null);
+    }
+
+    public List<Circle> getCirclesByUserId(long userId) {
+        if(!userService.isUserValid(userId)) {
+            return null;
+        }
+        User user = getUserById(userId);
+        List<CircleUser> listCirclesUsers = circleUserRepository.findByUser(user);
+        return listCirclesUsers.stream().map(CircleUser::getCircle).toList();
     }
 
     public ResponseEntity<String> addUsersToCircle(long circleId, List<Long> userIds) {
@@ -110,6 +122,17 @@ public class CircleService {
             if(!userService.isUserValid(userId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
+            List<Circle> listCircles = (List<Circle>) getCirclesByUserId(userId);
+            int numberOfRegularCircles = 0;
+            for(Circle circle : listCircles) {
+                if (circle.getCircleType() == CircleType.REGULAR){
+                    numberOfRegularCircles++;
+                }
+            }
+            if (numberOfRegularCircles >= 5) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("The User already has 5 Circles");
+            }
+
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
 
             circleRepository.save(circle);

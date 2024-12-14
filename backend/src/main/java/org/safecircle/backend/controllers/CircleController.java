@@ -1,9 +1,11 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
+import org.checkerframework.checker.units.qual.C;
 import org.safecircle.backend.dto.CircleDTO;
 import org.safecircle.backend.models.Circle;
 import org.safecircle.backend.services.CircleService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,26 @@ public class CircleController {
 
     @CrossOrigin
     @GetMapping(value = "/{circleId}")
-    public Circle getCircleById(@PathVariable long circleId) {
-        return circleService.getCircleById(circleId);
+    public ResponseEntity<Circle> getCircleById(@PathVariable long circleId) {
+        Circle circle = circleService.getCircleById(circleId);
+        if(circle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        else{
+            return ResponseEntity.ok(circle);
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/getAll/{userId}")
+    public ResponseEntity<List<Circle>> getCirclesByUserId(@PathVariable long userId) {
+        List<Circle> listCircles = circleService.getCirclesByUserId(userId);
+        if(listCircles == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        else {
+            return ResponseEntity.ok(listCircles);
+        }
     }
 
     @CrossOrigin
