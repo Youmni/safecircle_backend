@@ -9,6 +9,7 @@ import org.safecircle.backend.enums.UserType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,6 +26,7 @@ public class JwtService {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(String.valueOf(id))
                 .claim("role", role)
+                .claim("type", "access")
                 .expirationTime(cal.getTime())
                 .build();
 
@@ -44,6 +46,7 @@ public class JwtService {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(String.valueOf(id))
                 .claim("role", role)
+                .claim("type", "refresh")
                 .expirationTime(cal.getTime())
                 .build();
 
@@ -81,4 +84,9 @@ public class JwtService {
         String role = (String) signedJWT.getJWTClaimsSet().getClaim("role");
         return UserType.valueOf(role);
     }
+    public static String getClaim(String token, String claim) throws ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        return signedJWT.getJWTClaimsSet().getStringClaim(claim);
+    }
+
 }

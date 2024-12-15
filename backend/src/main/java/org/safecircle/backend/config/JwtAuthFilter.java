@@ -50,6 +50,12 @@ public class JwtAuthFilter  extends OncePerRequestFilter {
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 UserType role = null;
                 try {
+                    String tokenType = JwtService.getClaim(jwt, "type");
+                    if (!"access".equals(tokenType)) {
+                        logger.error("Invalid token type: Only access tokens are allowed");
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
                     role = jwtService.getRoleFromToken(jwt);
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
