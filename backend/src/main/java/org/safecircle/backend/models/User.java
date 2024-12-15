@@ -16,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.safecircle.backend.enums.UserType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,8 +56,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Blacklist> blacklists;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Invitation> invitations;
+    @OneToMany(mappedBy = "sender")
+    private List<Invitation> sentInvitations;
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Invitation> receivedInvitations;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> reports;
@@ -165,13 +169,6 @@ public class User {
         this.blacklists = blacklists;
     }
 
-    public Set<Invitation> getInvitations() {
-        return invitations;
-    }
-
-    public void setInvitations(Set<Invitation> invitations) {
-        this.invitations = invitations;
-    }
 
     public Set<Report> getReports() {
         return reports;
@@ -221,4 +218,27 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public List<Invitation> getSentInvitations() {
+        return sentInvitations;
+    }
+
+    public void setSentInvitations(List<Invitation> sentInvitations) {
+        this.sentInvitations = sentInvitations;
+    }
+
+    public List<Invitation> getReceivedInvitations() {
+        return receivedInvitations;
+    }
+
+    public void setReceivedInvitations(List<Invitation> receivedInvitations) {
+        this.receivedInvitations = receivedInvitations;
+    }
+
+    public Set<FcmToken> getFcmTokens() {
+        return fcmTokens;
+    }
+
+    public void setFcmTokens(Set<FcmToken> fcmTokens) {
+        this.fcmTokens = fcmTokens;
+    }
 }

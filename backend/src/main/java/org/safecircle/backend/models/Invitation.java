@@ -29,9 +29,19 @@ public class Invitation {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "User is required")
-    private User user;
+    @JoinColumn(name = "sender_id", nullable = false)
+    @NotNull(message = "Sender is required")
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    @NotNull(message = "Receiver is required")
+    private User receiver;
+
+    @ManyToOne
+    @JoinColumn(name = "circle_id", nullable = false)
+    @NotNull(message = "Circle is required")
+    private Circle circle;
 
     protected Invitation() {
     }
@@ -54,5 +64,37 @@ public class Invitation {
 
     public void setInvitationId(long invitationId) {
         this.invitationId = invitationId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public User getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
+    }
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public void setCircle(Circle circle) {
+        this.circle = circle;
     }
 }

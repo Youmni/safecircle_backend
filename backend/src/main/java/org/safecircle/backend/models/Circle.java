@@ -46,6 +46,9 @@ public class Circle {
     @JsonBackReference
     Set<CircleUser> circleUsers;
 
+    @OneToMany(mappedBy = "circle", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Invitation> invitations;
+
     @CreationTimestamp
     @Column(name = "created_at")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -98,6 +101,14 @@ public class Circle {
     public void setAvailable(//@NotNull(message = "Availibilty should not be null")
                              boolean available) {
         isAvailable = available;
+    }
+
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(Set<Invitation> invitations) {
+        this.invitations = invitations;
     }
 
     public LocalDateTime getCreatedAt() {
