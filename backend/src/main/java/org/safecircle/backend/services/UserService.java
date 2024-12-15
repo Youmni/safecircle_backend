@@ -1,9 +1,7 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
-import org.safecircle.backend.dto.FcmTokenDTO;
-import org.safecircle.backend.dto.AuthDTO;
-import org.safecircle.backend.dto.UserDTO;
+import org.safecircle.backend.dto.*;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.CircleUser;
@@ -88,16 +86,37 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<String> authenticateUser(AuthDTO authDTO) {
+    public ResponseEntity<?> authenticateUser(AuthDTO authDTO) {
         try {
             Optional<User> userOpt = userRepository.findByEmail(authDTO.getEmail()).stream().findFirst();
             if (userOpt.isEmpty() || !bCryptPasswordEncoder.matches(authDTO.getPassword(), userOpt.get().getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(WRONG_CREDENTIALS);
             }
+            String refreshToken = jwtService.generateRefreshToken(userOpt.get().getUserId(), userOpt.get().getType());
             String token = jwtService.generateToken(userOpt.get().getUserId(), userOpt.get().getType());
-            return ResponseEntity.status(HttpStatus.OK).body(token);
+            return ResponseEntity.ok(new AuthResponse(token, refreshToken));
         }catch (JOSEException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error has occurred during authentication");
+        }
+    }
+
+    public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
+        try{
+            String refreshToken = request.getRefrechToken();
+            if(!jwtService.validateToken(refreshToken)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+            }
+
+            String userId = JwtService.getSubject(refreshToken);
+            UserType type = JwtService.getRoleFromToken(refreshToken);
+
+            String newJWTToken = jwtService.generateToken(Long.parseLong(userId), type);
+            String newRefreshToken = jwtService.generateRefreshToken(Long.parseLong(userId), type);
+
+            return ResponseEntity.ok(new AuthResponse(newJWTToken, newRefreshToken));
+
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error processing refresh token");
         }
     }
 

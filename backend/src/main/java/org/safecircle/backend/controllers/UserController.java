@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.FcmTokenDTO;
 import org.safecircle.backend.dto.AuthDTO;
+import org.safecircle.backend.dto.RefreshTokenRequest;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.UserService;
@@ -33,9 +34,20 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<String> authenticateUser(@Valid @RequestBody AuthDTO authDTO) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) {
             return userService.authenticateUser(authDTO);
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return userService.refreshToken(request);
+    }
+
+//    @CrossOrigin
+//    @PostMapping(value = "/authenticate")
+//    public ResponseEntity<String> authenticateUser(@Valid @RequestBody AuthDTO authDTO) {
+//        return userService.authenticateUser(authDTO);
+//    }
 
     @CrossOrigin
     @PutMapping("/update/{userId}")

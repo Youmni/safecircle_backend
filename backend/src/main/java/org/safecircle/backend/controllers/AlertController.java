@@ -21,11 +21,11 @@ public class AlertController {
         this.alertService = alertService;
     }
 
-//    @CrossOrigin
-//    @PostMapping("/send")
-//    public ResponseEntity<String> SendAlert(@RequestBody AlertDTO alert) {
-////        return alertService.sendAlert(alert);
-//    }
+    @CrossOrigin
+    @PostMapping("/send")
+    public ResponseEntity<String> SendAlert(@RequestBody AlertDTO alert) {
+        return alertService.sendAlert(alert);
+    }
 
 
 }

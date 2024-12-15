@@ -37,6 +37,25 @@ public class JwtService {
         return signedJWT.serialize();
     }
 
+    public String generateRefreshToken(long id, UserType role) throws JOSEException {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 7);
+
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .subject(String.valueOf(id))
+                .claim("role", role)
+                .expirationTime(cal.getTime())
+                .build();
+
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet);
+        JWSSigner signer = new MACSigner(secret);
+
+        signedJWT.sign(signer);
+
+        return signedJWT.serialize();
+    }
+
     public boolean validateToken(String token) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
@@ -57,7 +76,7 @@ public class JwtService {
         return signedJWT.getJWTClaimsSet().getSubject();
     }
 
-    public UserType getRoleFromToken(String token) throws java.text.ParseException {
+    public static UserType getRoleFromToken(String token) throws java.text.ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         String role = (String) signedJWT.getJWTClaimsSet().getClaim("role");
         return UserType.valueOf(role);
