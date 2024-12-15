@@ -1,6 +1,7 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -34,16 +35,16 @@ public class Alert {
     private String description;
 
     @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("circle-alert")
     Set<CircleAlert> circleAlerts;
 
     @OneToMany(mappedBy = "alert", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("user-alert")
     Set<UserAlert> userAlerts;
 
-    @ManyToOne
-    @JoinColumn(name = "location", nullable = false)
-    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    @JsonBackReference("alert-location")
     private Location location;
 
     @ManyToOne

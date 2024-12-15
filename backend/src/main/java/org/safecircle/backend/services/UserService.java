@@ -1,8 +1,7 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
-import org.safecircle.backend.dto.AuthDTO;
-import org.safecircle.backend.dto.UserDTO;
+import org.safecircle.backend.dto.*;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.CircleUser;
@@ -10,6 +9,7 @@ import org.safecircle.backend.models.Location;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.models.UserAlert;
 import org.safecircle.backend.repositories.CircleUserRepository;
+import org.safecircle.backend.repositories.LocationRepository;
 import org.safecircle.backend.repositories.UserAlertRepository;
 import org.safecircle.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -44,6 +43,8 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -77,7 +78,6 @@ public class UserService {
                     UserType.USER
                     );
 
-
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(USER_CREATED);
         }catch(Exception e){
@@ -86,16 +86,37 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<String> authenticateUser(AuthDTO authDTO) {
+    public ResponseEntity<?> authenticateUser(AuthDTO authDTO) {
         try {
             Optional<User> userOpt = userRepository.findByEmail(authDTO.getEmail()).stream().findFirst();
             if (userOpt.isEmpty() || !bCryptPasswordEncoder.matches(authDTO.getPassword(), userOpt.get().getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(WRONG_CREDENTIALS);
             }
+            String refreshToken = jwtService.generateRefreshToken(userOpt.get().getUserId(), userOpt.get().getType());
             String token = jwtService.generateToken(userOpt.get().getUserId(), userOpt.get().getType());
-            return ResponseEntity.status(HttpStatus.OK).body(token);
+            return ResponseEntity.ok(new AuthResponse(token, refreshToken));
         }catch (JOSEException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error has occurred during authentication");
+        }
+    }
+
+    public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
+        try{
+            String refreshToken = request.getRefrechToken();
+            if(!jwtService.validateToken(refreshToken)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+            }
+
+            String userId = JwtService.getSubject(refreshToken);
+            UserType type = JwtService.getRoleFromToken(refreshToken);
+
+            String newJWTToken = jwtService.generateToken(Long.parseLong(userId), type);
+            String newRefreshToken = jwtService.generateRefreshToken(Long.parseLong(userId), type);
+
+            return ResponseEntity.ok(new AuthResponse(newJWTToken, newRefreshToken));
+
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error processing refresh token");
         }
     }
 
@@ -156,6 +177,34 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
     }
 
+    public ResponseEntity<String> updateLocation(long userId, double latitude, double longitude) {
+        try {
+            if (!isUserValid(userId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
+            }
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid latitude or longitude values.");
+            }
+
+            User user = getUserById(userId);
+            Location location = user.getLocation();
+
+            if(location == null){
+                System.out.println("here");
+                location = new Location();
+            }
+
+            location.setLatitude(BigDecimal.valueOf(latitude));
+            location.setLongitude(BigDecimal.valueOf(longitude));
+            user.setLocation(location);
+
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: could not update user location");
+        }
+    }
+
     public ResponseEntity<String> deleteUser(long userId) {
         if(!isUserValid(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
@@ -174,8 +223,43 @@ public class UserService {
             return userRepository.findById(userId).orElse(null);
     }
 
+    public List<User> getUserByFirstNameContaining(String firstName){
+        return userRepository.findByFirstNameContainingIgnoreCase(firstName);
+    }
+
+    public List<User> getUserByLastNameContaining(String lastName){
+        return userRepository.findByLastNameContainingIgnoreCase(lastName);
+    }
+
+    public List<User> getUserByFirstnameAndLastnameContaining(String firstName, String lastName){
+        Set<User> users = new HashSet<>();
+        users.addAll(userRepository.findByFirstNameContainingIgnoreCase(firstName));
+        users.addAll(userRepository.findByLastNameContainingIgnoreCase(lastName));
+        return new ArrayList<>(users);
+    }
+
+    public ResponseEntity<String> registerFcmToken(FcmTokenDTO fcmTokenDTO) {
+            List<User> users = userRepository.findByEmail(fcmTokenDTO.getEmail());
+
+            if (!users.isEmpty()) {
+                for (User user : users) {
+                    fcmTokenDTO.setFcmToken(fcmTokenDTO.getFcmToken());
+                    userRepository.save(user);
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User with email " + fcmTokenDTO.getEmail() + " not found!");
+            }
+        return ResponseEntity.ok("FCM Tokens registered successfully!");
+    }
+
+
     public boolean isUserValid(long userId){
         return userRepository.existsByUserId(userId);
+    }
+
+    public boolean isUserValidByEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 
     public boolean isAdmin(long userId){
@@ -184,6 +268,15 @@ public class UserService {
         }
         UserType role = getUserById(userId).getType();
         return UserType.ADMIN.equals(role);
+    }
+
+    public boolean isValidUserIds(List<Long> userIds){
+        for(Long userId : userIds){
+            if(!isUserValid(userId)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isValidEmail(String email) {

@@ -1,6 +1,7 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -61,17 +62,21 @@ public class User {
     private Set<Report> reports;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("user-alert")
     Set<UserAlert> userAlerts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonBackReference("circle-user")
     Set<CircleUser> circleUsers;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "location_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Location location;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference ("fcmToken-user")
+    private Set<FcmToken> fcmTokens;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -215,4 +220,5 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }

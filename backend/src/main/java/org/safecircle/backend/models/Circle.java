@@ -30,11 +30,11 @@ public class Circle {
     private String circleName;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "Circle type required. Could be: REGULAR, EVENT")
+    @NotNull(message = "Circle type required. Could be: REGULAR, EVENT")
     @Column(name = "circle_type")
     private CircleType circleType;
 
-    @NotNull(message = "Availibilty should not be null")
+    //@NotNull(message = "Availibilty should not be null")
     @Column(name = "is_available")
     private boolean isAvailable;
 
@@ -82,7 +82,7 @@ public class Circle {
         this.circleName = circleName;
     }
 
-    public @NotBlank(message = "Circle type required. Could be: REGULAR, EVENT") CircleType getCircleType() {
+    public @NotNull(message = "Circle type required. Could be: REGULAR, EVENT") CircleType getCircleType() {
         return circleType;
     }
 
@@ -90,12 +90,13 @@ public class Circle {
         this.circleType = circleType;
     }
 
-    @NotNull(message = "Availibilty should not be null")
+    //@NotNull(message = "Availibilty should not be null")
     public boolean isAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(@NotNull(message = "Availibilty should not be null") boolean available) {
+    public void setAvailable(//@NotNull(message = "Availibilty should not be null")
+                             boolean available) {
         isAvailable = available;
     }
 

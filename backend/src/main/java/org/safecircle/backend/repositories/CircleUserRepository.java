@@ -19,4 +19,5 @@ public interface CircleUserRepository extends JpaRepository<CircleUser, Long> {
 
     boolean existsByCircle(Circle circle);
     boolean existsByUser(User user);
+    boolean existsByCircleAndUser(Circle circle, User user);
 }

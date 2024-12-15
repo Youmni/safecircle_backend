@@ -28,13 +28,13 @@ public class Blacklist {
     @Column(name = "decription")
     private String description;
 
-    @NotBlank(message = "A start date must be given")
+    @NotNull(message = "A start date must be given")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "start_date")
     private LocalDate startDate;
 
-    @NotBlank(message = "A end date must be given")
+    @NotNull(message = "A end date must be given")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @Column(name = "end_date")
@@ -75,19 +75,19 @@ public class Blacklist {
         this.description = description;
     }
 
-    public @NotBlank(message = "A start date must be given") LocalDate getStartDate() {
+    public @NotNull(message = "A start date must be given") LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@NotBlank(message = "A start date must be given") LocalDate startDate) {
+    public void setStartDate(@NotNull(message = "A start date must be given") LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public @NotBlank(message = "A end date must be given") LocalDate getEndDate() {
+    public @NotNull(message = "A end date must be given") LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@NotBlank(message = "A end date must be given") LocalDate endDate) {
+    public void setEndDate(@NotNull(message = "A end date must be given") LocalDate endDate) {
         this.endDate = endDate;
     }
 
