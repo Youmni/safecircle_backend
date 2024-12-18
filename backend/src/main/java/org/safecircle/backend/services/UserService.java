@@ -102,7 +102,7 @@ public class UserService {
 
     public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
         try{
-            String refreshToken = request.getRefrechToken();
+            String refreshToken = request.getRefreshToken();
             if(!jwtService.validateToken(refreshToken)){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
             }

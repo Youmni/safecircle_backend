@@ -1,0 +1,118 @@
+# API information
+
+## User
+
+Get-requests:
+    - To get a specific user with userId: http://localhost:8080/user/{userId}
+    - To get all user with a specific first-name: http://localhost:8080/user/search/first-name
+    RequestParams necessary (example):
+    Key: firstName; Value: Mathias
+
+    - To get all user with a specific last-name: http://localhost:8080/user/search/last-name
+    RequestParams necessary (example):
+    Key: lastName; Value: Mertens
+
+    - To get all users with a specific first-name and last-name: http://localhost:8080/user/search
+    RequestParams necessary (example):
+    Key: firstName; Value: Mathias
+    Key: lastName; Value: Mertens
+
+Post-requests:
+    - To create a user: http://localhost:8080/user/create
+    RequestBody necessary (example):
+    {
+        "firstName": "Mathias",
+        "lastName": "Mertens",
+        "email": "mathias.mertens@student.ehb.be",
+        "password": "wachtwoord"
+    }
+
+    - To authenticate a specific user: http://localhost:8080/user/authenticate
+    RequestBody necessary (example):
+    {
+        "email": "mathias.mertens@student.ehb.be",
+        "password": "wachtwoord"
+    }
+
+    - To refresh your token: http://localhost:8080/user/refresh-token
+    RequestBody necessary (example):
+    {
+        "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNTEzNDc1Mn0.99A0ESJQmLXZ3u3pyHY_qVxrl0JgQQNXuyTiYxnCuGw"
+    }
+
+    - To register your token to a specific user with userId: http://localhost:8080/user/{userId}/register-token
+    RequestBody necessary (example):
+    {
+        "fcmToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNTEzNDc1Mn0.99A0ESJQmLXZ3u3pyHY_qVxrl0JgQQNXuyTiYxnCuGw"
+    }
+
+Put-requests:
+    - To update a specific user with userId: http://localhost:8080/user/update/{userId}
+    RequestParams necessary (example):
+    Key: firstName; Value: Mathias
+    Key: lastName; Value: Mertens
+    Key: email; Value: mathias.mertens@student.ehb.be
+    Key: phoneNumber; Value: 0489 50 74 21
+    Key: password; Value: wachtwoord
+
+    - To update the location from a specific user with userId: http://localhost:8080/user/location/{userId}
+    RequestParams necessary (example):
+    Key: latitude; Value: 21.0
+    Key: longitude; Value: 12.0
+
+
+## Circle
+
+Get-requests:
+    - To get a specific circle with circleId: http://localhost:8080/circle/{circleId}
+    - To get all circles from a specific user with userId: http://localhost:8080/circle/getAll/{userId}
+
+Post-requests:
+    - To let a user create a circle with userId: http://localhost:8080/circle/{userId}/create
+    RequestBody necessary (example):
+    {
+        "circleName" : "Test",
+        "circleType" : "REGULAR",
+        "available" : true
+    }
+
+    - To add specific user(s) to a specific circle with circleId and userIds: http://localhost:8080/circle/{circleId}/add/{userIds}
+
+Put-requests:
+    - To update a specific circle with circleId: http://localhost:8080/circle/{circleId}/update
+    RequestBody necessary (example):
+    {
+        "circleName" : "Test",
+        "circleType" : "REGULAR",
+        "available" : true
+    }
+
+    - To remove specific user from a specific circle with circleId and userId: http://localhost:8080/circle/{circleId}/remove/{userId}
+
+Delete-requests:
+    - To delete a specific circle with circleId: http://localhost:8080/circle/{circleId}/delete
+
+
+## Invitation
+
+Get-requests:
+    - To get a specific invitation with invitationId: http://localhost:8080/invitation/{invitationId}
+    - To get all invitations from a specific receiver with receiverId: http://localhost:8080/invitation/showAll/{receiverId}
+
+Post-requests:
+    - To create an invitation with specific circle, sender and receiver with circleId, senderId and receiverId:
+    http://localhost:8080/invitation/create/{circleId}/from/{senderId}/to/{receiverId}
+
+Put-requests:
+    - To let a specific receiver accept a specific invitation from a specific circle with invitationId, circleId and receiverId:
+    http://localhost:8080/invitation/create/{invitationId}/{circleId}/{receiverId}/accept
+    - To decline a specific invitation with invitationId: http://localhost:8080/invitation/{invitationId}/decline
+
+Delete-requests:
+    - To delete a specific invitation with invitationId: http://localhost:8080/invitation/{invitationId}/delete
+
+
+## Statistics
+
+Get-requests:
+    - To get the amount of a specific class with className: http://localhost:8080/statistics/{className}

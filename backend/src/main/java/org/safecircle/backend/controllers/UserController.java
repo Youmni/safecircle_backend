@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,40 +70,81 @@ public class UserController {
 
     @CrossOrigin
     @GetMapping(value = "/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable long userId) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable long userId) {
         User user = userService.getUserById(userId);
         if (user != null) {
-            return ResponseEntity.ok(user);
+            UserDTO userDTO = new UserDTO(
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    null,
+                    user.getPhoneNumber()
+            );
+            return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
     @CrossOrigin
     @GetMapping("/search/first-name")
-    public ResponseEntity<List<User>> getUsersByFirstName(@RequestParam String firstName) {
+    public ResponseEntity<List<UserDTO>> getUsersByFirstName(@RequestParam String firstName) {
         List<User> users = userService.getUserByFirstNameContaining(firstName);
-        return ResponseEntity.ok(users);
+
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO(
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    null,
+                    user.getPhoneNumber()
+            );
+            userDTOS.add(userDTO);
+        }
+        return ResponseEntity.ok(userDTOS);
     }
     @CrossOrigin
     @GetMapping("/search/last-name")
-    public ResponseEntity<List<User>> getUsersByLastName(@RequestParam String lastName) {
+    public ResponseEntity<List<UserDTO>> getUsersByLastName(@RequestParam String lastName) {
         List<User> users = userService.getUserByLastNameContaining(lastName);
-        return ResponseEntity.ok(users);
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO(
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    null,
+                    user.getPhoneNumber()
+            );
+            userDTOS.add(userDTO);
+        }
+        return ResponseEntity.ok(userDTOS);
     }
 
     @CrossOrigin
     @GetMapping("/search")
-    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
+    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         if (firstName == null || lastName == null) {
             return ResponseEntity.badRequest().body(Collections.emptyList());
         }
         List<User> users = userService.getUserByFirstnameAndLastnameContaining(firstName, lastName);
-        return ResponseEntity.ok(users);
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO(
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    null,
+                    user.getPhoneNumber()
+            );
+            userDTOS.add(userDTO);
+        }
+        return ResponseEntity.ok(userDTOS);
     }
     @CrossOrigin
-    @PostMapping("/{id}/register-token")
-    public ResponseEntity<String> registerFcmTokens(@PathVariable long id, @RequestBody FcmTokenDTO fcmTokenDTO) {
-        return userService.registerFcmToken(id, fcmTokenDTO);
+    @PostMapping("/{userId}/register-token")
+    public ResponseEntity<String> registerFcmTokens(@PathVariable long userId, @RequestBody FcmTokenDTO fcmTokenDTO) {
+        return userService.registerFcmToken(userId, fcmTokenDTO);
     }
 
     @PutMapping("/location/{userId}")
