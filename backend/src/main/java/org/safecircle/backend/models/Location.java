@@ -30,8 +30,8 @@ public class Location {
     private BigDecimal latitude;
 
     @NotNull(message = "You need to provide a longitude")
-    @DecimalMin(value = "-90", message = "Longitude cannot be smaller than -90")
-    @DecimalMax(value = "90", message = "Longitude cannot be bigger than 90")
+    @DecimalMin(value = "-180", message = "Longitude cannot be smaller than -180")
+    @DecimalMax(value = "180", message = "Longitude cannot be bigger than 180")
     @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
