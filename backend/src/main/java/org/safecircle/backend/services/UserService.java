@@ -238,17 +238,18 @@ public class UserService {
         return new ArrayList<>(users);
     }
 
-    public ResponseEntity<String> registerFcmToken(FcmTokenDTO fcmTokenDTO) {
-            List<User> users = userRepository.findByEmail(fcmTokenDTO.getEmail());
+    public ResponseEntity<String> registerFcmToken(long userId, FcmTokenDTO fcmTokenDTO) {
+            List<User> users = userRepository.findByUserId(userId);
 
             if (!users.isEmpty()) {
                 for (User user : users) {
+                    fcmTokenDTO.setUserId(userId);
                     fcmTokenDTO.setFcmToken(fcmTokenDTO.getFcmToken());
                     userRepository.save(user);
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with email " + fcmTokenDTO.getEmail() + " not found!");
+                        .body("User with email " + fcmTokenDTO.getUserId() + " not found!");
             }
         return ResponseEntity.ok("FCM Tokens registered successfully!");
     }

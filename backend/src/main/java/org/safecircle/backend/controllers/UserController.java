@@ -100,9 +100,9 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
     @CrossOrigin
-    @PostMapping("/register-token")
-    public ResponseEntity<String> registerFcmTokens(@RequestBody FcmTokenDTO fcmTokenDTO) {
-        return userService.registerFcmToken(fcmTokenDTO);
+    @PostMapping("/{id}/register-token")
+    public ResponseEntity<String> registerFcmTokens(@PathVariable long id, @RequestBody FcmTokenDTO fcmTokenDTO) {
+        return userService.registerFcmToken(id, fcmTokenDTO);
     }
 
     @PutMapping("/location/{userId}")

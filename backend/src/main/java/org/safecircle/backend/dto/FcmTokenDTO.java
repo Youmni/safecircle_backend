@@ -1,16 +1,9 @@
 package org.safecircle.backend.dto;
 
 public class FcmTokenDTO {
-    private String email;
     private String fcmToken;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    private long userId;
 
     public String getFcmToken() {
         return fcmToken;
@@ -18,5 +11,13 @@ public class FcmTokenDTO {
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
