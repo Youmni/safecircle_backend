@@ -63,7 +63,7 @@ public class CircleController {
     }
 
     @CrossOrigin
-    @PutMapping(value = "{circleId}/remove/{userId}")
+    @PutMapping(value = "/{circleId}/remove/{userId}")
     public ResponseEntity<String> removeUserById(@PathVariable long circleId, @PathVariable long userId) {
         return circleService.removeUserById(circleId, userId);
     }
