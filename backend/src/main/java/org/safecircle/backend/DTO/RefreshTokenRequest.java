@@ -2,13 +2,13 @@ package org.safecircle.backend.dto;
 
 public class RefreshTokenRequest {
 
-    private String refrechToken;
+    private String refreshToken;
 
-    public String getRefrechToken() {
-        return refrechToken;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
-    public void setRefrechToken(String refrechToken) {
-        this.refrechToken = refrechToken;
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
