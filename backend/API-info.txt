@@ -55,6 +55,7 @@ Put-requests:
     Key: email; Value: mathias.mertens@student.ehb.be
     Key: phoneNumber; Value: 0489 50 74 21
     Key: password; Value: wachtwoord
+    Key: dateOfBirth; Value: 2004-07-28 (minimum 13 years old)
 
     - To update the location from a specific user with userId: http://localhost:8080/user/location/{userId}
     RequestParams necessary (example):

@@ -125,8 +125,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<String> updateUser(long userId, String firstName, String lastName, String email,String phoneNumber, String password) {
-
+    public ResponseEntity<String> updateUser(long userId, String firstName, String lastName, String email, String phoneNumber, String password, LocalDate dateOfBirth) {
         boolean isChanged = false;
 
         if (!isUserValid(userId)) {
@@ -134,38 +133,48 @@ public class UserService {
         }
         try {
             User user = getUserById(userId);
+            LocalDate today = LocalDate.now();
 
-            if(firstName != null && !firstName.isEmpty()  && (lastName.trim().length() >= 2 && lastName.trim().length() <= 40)){
+            if (firstName != null && !firstName.isEmpty()) {
                 user.setFirstName(firstName.trim());
                 isChanged = true;
             }
-            if(lastName != null && !lastName.isEmpty() && (lastName.trim().length() >= 2 && lastName.trim().length() <= 50)){
+            if (lastName != null && !lastName.isEmpty()) {
                 user.setLastName(lastName.trim());
                 isChanged = true;
             }
-            if(email != null && !email.isEmpty()){
-                if(isValidEmail(email)){
+            if (email != null && !email.isEmpty()) {
+                if (isValidEmail(email)) {
                     user.setEmail(email.trim());
                     isChanged = true;
                 }
             }
-            if(phoneNumber != null && !phoneNumber.isEmpty()){
+            if (phoneNumber != null && !phoneNumber.isEmpty()) {
                 user.setPhoneNumber(phoneNumber.trim());
                 isChanged = true;
             }
-            if(password != null && !password.isEmpty() && (password.length()> 8 && password.length() < 40 )){
+            if (password != null && !password.isEmpty() && (password.length() > 8 && password.length() < 40)) {
                 user.setPassword(bCryptPasswordEncoder.encode(password));
                 isChanged = true;
             }
+            if (dateOfBirth != null) {
+                if (Period.between(dateOfBirth, today).getYears() < 13){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The user needs to be 13 years old minimum");
+                }
+                else{
+                    user.setDateOfBirth(dateOfBirth);
+                    isChanged = true;
+                }
+            }
 
-            if(isChanged){
+            if (isChanged) {
                 userRepository.save(user);
                 return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
-            }else{
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nothing to update");
             }
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: could not update user");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: could not update user");
         }
     }
 
