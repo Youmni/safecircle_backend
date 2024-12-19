@@ -4,14 +4,8 @@ import com.nimbusds.jose.JOSEException;
 import org.safecircle.backend.dto.*;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
-import org.safecircle.backend.models.CircleUser;
-import org.safecircle.backend.models.Location;
-import org.safecircle.backend.models.User;
-import org.safecircle.backend.models.UserAlert;
-import org.safecircle.backend.repositories.CircleUserRepository;
-import org.safecircle.backend.repositories.LocationRepository;
-import org.safecircle.backend.repositories.UserAlertRepository;
-import org.safecircle.backend.repositories.UserRepository;
+import org.safecircle.backend.models.*;
+import org.safecircle.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +41,8 @@ public class UserService {
     private JwtService jwtService;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -248,18 +244,17 @@ public class UserService {
     }
 
     public ResponseEntity<String> registerFcmToken(long userId, FcmTokenDTO fcmTokenDTO) {
-            List<User> users = userRepository.findByUserId(userId);
 
-            if (!users.isEmpty()) {
-                for (User user : users) {
-                    fcmTokenDTO.setUserId(userId);
-                    fcmTokenDTO.setFcmToken(fcmTokenDTO.getFcmToken());
-                    userRepository.save(user);
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with email " + fcmTokenDTO.getUserId() + " not found!");
-            }
+        if(!isUserValid(userId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
+        }
+        User user = getUserById(userId);
+        FcmToken fcmToken = new FcmToken(
+                user,
+                fcmTokenDTO.getFcmToken()
+        );
+        fcmTokenRepository.save(fcmToken);
+
         return ResponseEntity.ok("FCM Tokens registered successfully!");
     }
 
