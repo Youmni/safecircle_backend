@@ -11,10 +11,10 @@ public class UserDTO {
     private String phone;
     private LocalDate dateOfBirth;
 
-    public UserDTO(String firstName, String email, String lastName, String password, String phone, LocalDate dateOfBirth) {
+    public UserDTO(String firstName, String lastName,  String email, String password, String phone, LocalDate dateOfBirth) {
         this.firstName = firstName;
-        this.email = email;
         this.lastName = lastName;
+        this.email = email;
         this.password = password;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
