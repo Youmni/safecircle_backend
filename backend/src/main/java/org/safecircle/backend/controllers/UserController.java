@@ -8,10 +8,12 @@ import org.safecircle.backend.dto.RefreshTokenRequest;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.UserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,10 +60,11 @@ public class UserController {
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phoneNumber,
-            @RequestParam(required = false) String password
-    ) {
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateOfBirth
+            ) {
         try {
-            ResponseEntity<String> response = userService.updateUser(userId, firstName, lastName, email, phoneNumber, password);
+            ResponseEntity<String> response = userService.updateUser(userId, firstName, lastName, email, phoneNumber, password, dateOfBirth);
             return response;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the user");
