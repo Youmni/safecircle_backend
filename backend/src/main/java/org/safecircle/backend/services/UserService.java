@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -67,7 +69,13 @@ public class UserService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(ALREADY_EXISTS);
             }
+            LocalDate today = LocalDate.now();
+            LocalDate dateOfBirth = userDTO.getDateOfBirth();
 
+            int age = Period.between(dateOfBirth, today).getYears();
+            if (age < 13) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 13 years old");
+            }
 
             User user = new User(
                     userDTO.getFirstName(),
@@ -75,6 +83,7 @@ public class UserService {
                     userDTO.getEmail(),
                     bCryptPasswordEncoder.encode(userDTO.getPassword()),
                     userDTO.getPhone(),
+                    userDTO.getDateOfBirth(),
                     UserType.USER
                     );
 

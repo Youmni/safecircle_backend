@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -15,6 +17,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.safecircle.backend.enums.UserType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +51,12 @@ public class User {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @NotNull(message = "Date of Birth is required")
+    @Column(name = "date_of_birth")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "UserType must be specified and should be either ADMIN or USER")
@@ -96,12 +105,13 @@ public class User {
 
     protected User() {}
 
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, UserType type) {
+    public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate dateOfBirth, UserType type) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
+        this.dateOfBirth = dateOfBirth;
         this.type = type;
     }
 
@@ -151,6 +161,14 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public @NotNull(message = "Date of Birth is required") LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(@NotNull(message = "Date of Birth is required") LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public @NotNull(message = "UserType must be specified and should be either ADMIN or USER") UserType getType() {

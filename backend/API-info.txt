@@ -24,7 +24,8 @@ Post-requests:
         "firstName": "Mathias",
         "lastName": "Mertens",
         "email": "mathias.mertens@student.ehb.be",
-        "password": "wachtwoord"
+        "password": "wachtwoord",
+        "dateOfBirth" : "2004-12-12"
     }
 
     - To authenticate a specific user: http://localhost:8080/user/authenticate

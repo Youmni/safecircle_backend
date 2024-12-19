@@ -11,15 +11,17 @@ public class InvitationDTO {
     private long senderId;
     private long receiverId;
     private long circleId;
+    private String circleName;
 
     public InvitationDTO() {
     }
 
-    public InvitationDTO(InvitationStatus status, long senderId, long receiverId, long circleId) {
+    public InvitationDTO(InvitationStatus status, long senderId, long receiverId, long circleId, String circleName) {
         this.status = status;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.circleId = circleId;
+        this.circleName = circleName;
     }
 
     public long getInvitationId() {
@@ -68,5 +70,13 @@ public class InvitationDTO {
 
     public void setCircleId(long circleId) {
         this.circleId = circleId;
+    }
+
+    public String getCircleName() {
+        return circleName;
+    }
+
+    public void setCircleName(String circleName) {
+        this.circleName = circleName;
     }
 }

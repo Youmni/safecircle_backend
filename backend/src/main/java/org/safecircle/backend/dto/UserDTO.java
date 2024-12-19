@@ -1,5 +1,7 @@
 package org.safecircle.backend.dto;
 
+import java.time.LocalDate;
+
 public class UserDTO {
 
     private String firstName;
@@ -7,13 +9,15 @@ public class UserDTO {
     private String email;
     private String password;
     private String phone;
+    private LocalDate dateOfBirth;
 
-    public UserDTO(String firstName, String lastName, String email, String password, String phone) {
+    public UserDTO(String firstName, String email, String lastName, String password, String phone, LocalDate dateOfBirth) {
         this.firstName = firstName;
-        this.lastName = lastName;
         this.email = email;
+        this.lastName = lastName;
         this.password = password;
         this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getFirstName() {
@@ -54,5 +58,13 @@ public class UserDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }
