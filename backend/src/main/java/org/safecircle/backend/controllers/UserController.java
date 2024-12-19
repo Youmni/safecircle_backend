@@ -78,7 +78,8 @@ public class UserController {
                     user.getLastName(),
                     user.getEmail(),
                     null,
-                    user.getPhoneNumber()
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
             );
             return ResponseEntity.ok(userDTO);
         } else {
@@ -97,7 +98,8 @@ public class UserController {
                     user.getLastName(),
                     user.getEmail(),
                     null,
-                    user.getPhoneNumber()
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
             );
             userDTOS.add(userDTO);
         }
@@ -114,7 +116,8 @@ public class UserController {
                     user.getLastName(),
                     user.getEmail(),
                     null,
-                    user.getPhoneNumber()
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
             );
             userDTOS.add(userDTO);
         }
@@ -135,7 +138,8 @@ public class UserController {
                     user.getLastName(),
                     user.getEmail(),
                     null,
-                    user.getPhoneNumber()
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
             );
             userDTOS.add(userDTO);
         }

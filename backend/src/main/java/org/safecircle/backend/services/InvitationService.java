@@ -41,6 +41,7 @@ public class InvitationService {
         invitationDTO.setStatus(invitation.getStatus());
         invitationDTO.setCreatedAt(invitation.getCreatedAt());
         invitationDTO.setCircleId(invitation.getCircle().getCircleId());
+        invitationDTO.setCircleName(invitation.getCircle().getCircleName());
         invitationDTO.setSenderId(invitation.getSender().getUserId());
         invitationDTO.setReceiverId(invitation.getReceiver().getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(invitationDTO);
@@ -66,6 +67,7 @@ public class InvitationService {
             invitationDTO.setStatus(invitation.getStatus());
             invitationDTO.setCreatedAt(invitation.getCreatedAt());
             invitationDTO.setCircleId(invitation.getCircle().getCircleId());
+            invitationDTO.setCircleName(invitation.getCircle().getCircleName());
             invitationDTO.setReceiverId(invitation.getReceiver().getUserId());
             invitationDTO.setSenderId(invitation.getSender().getUserId());
             invitationDTOs.add(invitationDTO);
