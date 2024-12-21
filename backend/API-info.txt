@@ -68,6 +68,7 @@ Put-requests:
 Get-requests:
     - To get a specific circle with circleId: http://localhost:8080/circle/{circleId}
     - To get all circles from a specific user with userId: http://localhost:8080/circle/getAll/{userId}
+    - To get all users from a specific circle with circleId: http://localhost:8080/circle/{circleId}/showAllUsers
 
 Post-requests:
     - To let a user create a circle with userId: http://localhost:8080/circle/{userId}/create
