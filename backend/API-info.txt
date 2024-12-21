@@ -49,7 +49,7 @@ Post-requests:
 
 Put-requests:
     - To update a specific user with userId: http://localhost:8080/user/update/{userId}
-    RequestParams necessary (example):
+    RequestParams not all necessary (example):
     Key: firstName; Value: Mathias
     Key: lastName; Value: Mertens
     Key: email; Value: mathias.mertens@student.ehb.be
@@ -68,6 +68,7 @@ Put-requests:
 Get-requests:
     - To get a specific circle with circleId: http://localhost:8080/circle/{circleId}
     - To get all circles from a specific user with userId: http://localhost:8080/circle/getAll/{userId}
+    - To get all users from a specific circle with circleId: http://localhost:8080/circle/{circleId}/showAllUsers
 
 Post-requests:
     - To let a user create a circle with userId: http://localhost:8080/circle/{userId}/create
@@ -118,3 +119,31 @@ Delete-requests:
 
 Get-requests:
     - To get the amount of a specific class with className: http://localhost:8080/statistics/{className}
+
+
+## Blacklist
+
+Get-requests:
+    - To get a specific blacklist with blacklistId: http://localhost:8080/blacklist/{blacklistId}
+    - To get all blacklists from a specific user with userId: http://localhost:8080/invitation/showAll/{userId}
+
+Post-requests:
+    - To create a blacklist with specific description, startDate, endDate and user with userId:
+    http://localhost:8080/blacklist/create
+    RequestBody necessary (example):
+    {
+        "description" : "The reason for the blacklist",
+        "startDate" : "2024-12-22",
+        "endDate" : "2024-12-30",
+        "userId" : 1
+    }
+
+Put-requests:
+    - To update a specific blacklist with blacklistId: http://localhost:8080/blacklist/{blacklistId}/update
+    RequestParams not all necessary (example):
+    Key: description; Value: Updated description
+    Key: startDate; Value: 2025-01-16
+    Key: endDate; Value: 2025-02-16 (needs to be after startDate)
+
+Delete-requests:
+    - To delete a specific blacklist with blacklistId: http://localhost:8080/blacklist/{blacklistId}/delete

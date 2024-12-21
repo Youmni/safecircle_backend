@@ -3,6 +3,7 @@ package org.safecircle.backend.services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.CircleDTO;
+import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
@@ -55,6 +56,27 @@ public class CircleService {
         User user = getUserById(userId);
         List<CircleUser> listCirclesUsers = circleUserRepository.findByUser(user);
         return listCirclesUsers.stream().map(CircleUser::getCircle).toList();
+    }
+
+    public ResponseEntity<List<UserDTO>> getUsersByCircleId(long circleId) {
+        if(!circleRepository.existsByCircleId(circleId)) {
+            return null;
+        }
+        List<CircleUser> circleUserList = circleUserRepository.findByCircle(circleRepository.findByCircleId(circleId).getFirst());
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for (CircleUser circleUser : circleUserList) {
+            User user = circleUser.getUser();
+            UserDTO userDTO = new UserDTO(
+                    user.getFirstName(),
+                    user.getEmail(),
+                    user.getLastName(),
+                    null,
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
+            );
+            userDTOList.add(userDTO);
+        }
+        return ResponseEntity.ok(userDTOList);
     }
 
     public ResponseEntity<String> addUsersToCircle(long circleId, List<Long> userIds) {
