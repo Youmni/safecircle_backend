@@ -1,23 +1,45 @@
 package org.safecircle.backend.dto;
 
+import org.safecircle.backend.enums.UserType;
+import org.safecircle.backend.models.Blacklist;
+import org.safecircle.backend.models.Circle;
+import org.safecircle.backend.models.CircleUser;
+import org.safecircle.backend.models.CircleUserKey;
+
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 public class UserDTO {
 
+    private long userId;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
-    private String phone;
     private LocalDate dateOfBirth;
+    private String phoneNumber;
+    private UserType userType;
+    private Set<Long> blacklists;
+    private Set<CircleUserKey> circles;
 
-    public UserDTO(String firstName, String lastName,  String email, String password, String phone, LocalDate dateOfBirth) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+    public UserDTO(long userId, String firstName, String lastName, String email,LocalDate dateOfBirth, String phoneNumber, UserType userType, Set<Long> blacklists, Set<CircleUserKey> circles) {
+        this.userId = userId;
+        this.circles = circles;
+        this.blacklists = blacklists;
+        this.userType = userType;
+        this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.lastName = lastName;
+        this.firstName = firstName;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -36,6 +58,14 @@ public class UserDTO {
         this.lastName = lastName;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -44,27 +74,35 @@ public class UserDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public String getPhone() {
-        return phone;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    public Set<Long> getBlacklists() {
+        return blacklists;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setBlacklists(Set<Long> blacklists) {
+        this.blacklists = blacklists;
+    }
+
+    public Set<CircleUserKey> getCircles() {
+        return circles;
+    }
+
+    public void setCircles(Set<CircleUserKey> circles) {
+        this.circles = circles;
     }
 }

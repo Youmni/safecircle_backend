@@ -59,7 +59,7 @@ public class UserService {
         this.circleUserRepository = circleUserRepository;
     }
 
-    public ResponseEntity<String> createUser(UserDTO userDTO) {
+    public ResponseEntity<String> createUser(UserRequestDTO userDTO) {
         try{
             if(userRepository.existsByEmail(userDTO.getEmail())){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
