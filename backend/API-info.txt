@@ -147,3 +147,32 @@ Put-requests:
 
 Delete-requests:
     - To delete a specific blacklist with blacklistId: http://localhost:8080/blacklist/{blacklistId}/delete
+
+
+## Report
+
+Get-requests:
+    - To get a specific report with reportId: http://localhost:8080/report/{reportId}
+    - To get all blacklists from a specific user with userId: http://localhost:8080/report/{userId}/showAll
+    - To get all reports: http://localhost:8080/report/showAll
+    - To get all pending reports: http://localhost:8080/report/showPending
+    - To get all closed reports: http://localhost:8080/report/showClosed
+    - To get all flagged reports: http://localhost:8080/report/showFlagged
+
+Post-requests:
+    - To create a report with specific subject, description, email, status and user with userId:
+    http://localhost:8080/report/{userId}/create
+    RequestBody necessary (example):
+    {
+        "subject" : "Title Report",
+        "description" : "A description for the report",
+        "email" : "mathias.mertens@student.ehb.be",
+        "status" : "PENDING"
+    }
+
+Put-requests:
+    - To change the status of a specific report with reportId: http://localhost:8080/report/{reportId}/changeStatus
+    RequestParams not all necessary (example):
+    Key: status; Value: Updated CLOSED
+
+
