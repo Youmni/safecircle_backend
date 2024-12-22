@@ -1,4 +1,6 @@
-package org.safecircle.backend.DTO;
+package org.safecircle.backend.dto;
+
+import org.safecircle.backend.enums.EventStatus;
 
 import java.time.LocalDate;
 
@@ -6,16 +8,20 @@ public class EventDTO {
 
     private int userCountEstimate;
     private String eventName;
+    private EventStatus eventStatus;
     private String email;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocationDTO location;
 
-    public EventDTO(int userCountEstimate, String eventName, String email, LocalDate startDate, LocalDate endDate) {
+    public EventDTO(int userCountEstimate, String eventName, EventStatus eventStatus, String email, LocationDTO location, LocalDate endDate, LocalDate startDate) {
         this.userCountEstimate = userCountEstimate;
         this.eventName = eventName;
+        this.eventStatus = eventStatus;
         this.email = email;
-        this.startDate = startDate;
+        this.location = location;
         this.endDate = endDate;
+        this.startDate = startDate;
     }
 
     public int getUserCountEstimate() {
@@ -34,20 +40,12 @@ public class EventDTO {
         this.eventName = eventName;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public EventStatus getEventStatus() {
+        return eventStatus;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
     }
 
     public String getEmail() {
@@ -56,5 +54,29 @@ public class EventDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocationDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationDTO location) {
+        this.location = location;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }
