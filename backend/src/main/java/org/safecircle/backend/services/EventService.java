@@ -108,14 +108,14 @@ public class EventService {
         List<EventDTO> events = new ArrayList<>();
         eventRepository.findAll().forEach(event -> {
             EventDTO eventDTO = new EventDTO(
+                    event.getEventId(),
                     event.getUserCountEstimate(),
                     event.getEventName(),
                     event.getEventStatus(),
                     event.getEmail(),
-                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
+                    event.getStartDate(),
                     event.getEndDate(),
-                    event.getStartDate()
-            );
+                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()));
             events.add(eventDTO);
         });
         return events;

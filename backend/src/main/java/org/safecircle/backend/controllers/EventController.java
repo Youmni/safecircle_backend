@@ -36,7 +36,7 @@ public class EventController {
     }
 
     @CrossOrigin
-    @GetMapping()
+    @GetMapping("/all")
     public List<EventDTO> GetAllEvents() {
         return eventService.getAllEvents();
     }

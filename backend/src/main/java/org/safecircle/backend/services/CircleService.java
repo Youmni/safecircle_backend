@@ -3,9 +3,11 @@ package org.safecircle.backend.services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.CircleDTO;
+import org.safecircle.backend.dto.CircleRequestDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.dto.UserRequestDTO;
 import org.safecircle.backend.enums.CircleType;
+import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
 import org.safecircle.backend.repositories.CircleRepository;
@@ -68,9 +70,10 @@ public class CircleService {
         for (CircleUser circleUser : circleUserList) {
             User user = circleUser.getUser();
             UserRequestDTO userDTO = new UserRequestDTO(
+                    user.getUserId(),
                     user.getFirstName(),
-                    user.getEmail(),
                     user.getLastName(),
+                    user.getEmail(),
                     null,
                     user.getPhoneNumber(),
                     user.getDateOfBirth()
@@ -209,6 +212,19 @@ public class CircleService {
                     .body("There was an error deleting the Circle");
         }
     }
+    public List<CircleRequestDTO> getCircleByType(CircleType type) {
+        return circleRepository.findByCircleType(type).stream()
+                .map(circle -> new CircleRequestDTO(
+                        circle.getCircleId(),
+                        circle.getCircleName(),
+                        circle.getCircleType(),
+                        circle.isAvailable(),
+                        circle.getCreatedAt(),
+                        circle.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     public boolean isCircleValid(long circleId) {
         return circleRepository.existsByCircleId(circleId);
