@@ -46,6 +46,7 @@ public class CircleAlert {
     public CircleAlert(Alert alert, Circle circle) {
         this.alert = alert;
         this.circle = circle;
+        this.id = new CircleAlertKey(circle.getCircleId(), alert.getAlertId());
     }
 
     public CircleAlertKey getId() {

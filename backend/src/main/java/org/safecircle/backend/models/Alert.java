@@ -60,10 +60,11 @@ public class Alert {
 
     protected Alert() {}
 
-    public Alert(SafetyStatus status, String description, Location location) {
+    public Alert(SafetyStatus status, String description, Location location, User user) {
         this.status = status;
         this.description = description;
         this.location = location;
+        this.user = user;
     }
 
     public long getAlertId() {

@@ -3,7 +3,7 @@ package org.safecircle.backend.dto;
 
 import org.safecircle.backend.enums.SafetyStatus;
 import org.safecircle.backend.models.Location;
-
+import org.safecircle.backend.dto.LocationDTO;
 import java.math.BigDecimal;
 import java.util.List;
 
