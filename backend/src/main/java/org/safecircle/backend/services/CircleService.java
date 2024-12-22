@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.CircleDTO;
 import org.safecircle.backend.dto.UserDTO;
+import org.safecircle.backend.dto.UserRequestDTO;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
@@ -58,15 +59,15 @@ public class CircleService {
         return listCirclesUsers.stream().map(CircleUser::getCircle).toList();
     }
 
-    public ResponseEntity<List<UserDTO>> getUsersByCircleId(long circleId) {
+    public ResponseEntity<List<UserRequestDTO>> getUsersByCircleId(long circleId) {
         if(!circleRepository.existsByCircleId(circleId)) {
             return null;
         }
         List<CircleUser> circleUserList = circleUserRepository.findByCircle(circleRepository.findByCircleId(circleId).getFirst());
-        List<UserDTO> userDTOList = new ArrayList<>();
+        List<UserRequestDTO> userDTOList = new ArrayList<>();
         for (CircleUser circleUser : circleUserList) {
             User user = circleUser.getUser();
-            UserDTO userDTO = new UserDTO(
+            UserRequestDTO userDTO = new UserRequestDTO(
                     user.getFirstName(),
                     user.getEmail(),
                     user.getLastName(),

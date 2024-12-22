@@ -1,9 +1,13 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.DTO.EventDTO;
+import org.safecircle.backend.dto.EventDTO;
+import org.safecircle.backend.dto.LocationDTO;
+import org.safecircle.backend.enums.EventStatus;
 import org.safecircle.backend.models.Event;
+import org.safecircle.backend.models.Location;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.EventRepository;
+import org.safecircle.backend.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,7 @@ import java.util.List;
 public class EventService {
     private EventRepository eventRepository;
     private UserService userService;
+    private LocationRepository locationRepository;
 
     @Autowired
     public void setEventRepository(EventRepository eventRepository) {
@@ -33,13 +38,9 @@ public class EventService {
         this.userService = userService;
     }
 
-
-    @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET)
-    public List<Event> getAllEvents() {
-        ArrayList<Event> events = new ArrayList<>();
-        eventRepository.findAll().forEach(events::add);
-        return events;
+    @Autowired
+    public void setLocationRepository(LocationRepository locationRepository) {
+        this.locationRepository = locationRepository;
     }
 
     public Event getEventById(long id) {
@@ -53,16 +54,18 @@ public class EventService {
 
     public ResponseEntity<String> createEvent(EventDTO eventDTO) {
         try {
-            if (!userService.isUserValidByEmail(eventDTO.getEmail())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("The owner is not valid");
-            }
+
+            Location location = new Location(eventDTO.getLocation().latitude(), eventDTO.getLocation().longitude());
+            locationRepository.save(location);
+
             Event event = new Event(
                     eventDTO.getUserCountEstimate(),
                     eventDTO.getEventName(),
                     eventDTO.getEmail(),
+                    eventDTO.getEventStatus(),
                     eventDTO.getStartDate(),
-                    eventDTO.getEndDate());
+                    eventDTO.getEndDate(),
+                    location);
 
             eventRepository.save(event);
             return ResponseEntity.status(HttpStatus.CREATED).body("Event created");
@@ -70,6 +73,7 @@ public class EventService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create event" + e.getMessage());
         }
     }
+
 
     public ResponseEntity<String> UpdateEventById(long eventId, EventDTO eventDTO) {
         try {
@@ -80,6 +84,7 @@ public class EventService {
 
                event.setEventName(eventDTO.getEventName());
                event.setUserCountEstimate(eventDTO.getUserCountEstimate());
+               event.setEventStatus(event.getEventStatus());
                event.setStartDate(eventDTO.getStartDate());
                event.setEndDate(eventDTO.getEndDate());
                eventRepository.save(event);
@@ -98,5 +103,75 @@ public class EventService {
         }
         catch (Exception e) {}
     }
+
+    public List<EventDTO> getAllEvents(){
+        List<EventDTO> events = new ArrayList<>();
+        eventRepository.findAll().forEach(event -> {
+            EventDTO eventDTO = new EventDTO(
+                    event.getUserCountEstimate(),
+                    event.getEventName(),
+                    event.getEventStatus(),
+                    event.getEmail(),
+                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
+                    event.getEndDate(),
+                    event.getStartDate()
+            );
+            events.add(eventDTO);
+        });
+        return events;
+    }
+
+    public List<EventDTO> getEventsByName(String name){
+        List<EventDTO> events = new ArrayList<>();
+        eventRepository.findByEventNameContaining(name).forEach(event -> {
+            EventDTO eventDTO = new EventDTO(
+                    event.getUserCountEstimate(),
+                    event.getEventName(),
+                    event.getEventStatus(),
+                    event.getEmail(),
+                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
+                    event.getEndDate(),
+                    event.getStartDate()
+            );
+            events.add(eventDTO);
+        });
+        return events;
+    }
+
+    public List<EventDTO> getEventsById(long id){
+        List<EventDTO> events = new ArrayList<>();
+        eventRepository.findByEventId(id).forEach(event -> {
+            EventDTO eventDTO = new EventDTO(
+                    event.getUserCountEstimate(),
+                    event.getEventName(),
+                    event.getEventStatus(),
+                    event.getEmail(),
+                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
+                    event.getEndDate(),
+                    event.getStartDate()
+            );
+            events.add(eventDTO);
+        });
+        return events;
+    }
+
+    public List<EventDTO> getEventsByStatus(EventStatus status){
+        List<EventDTO> events = new ArrayList<>();
+        eventRepository.findByEventStatus(status).forEach(event -> {
+            EventDTO eventDTO = new EventDTO(
+                    event.getUserCountEstimate(),
+                    event.getEventName(),
+                    event.getEventStatus(),
+                    event.getEmail(),
+                    new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
+                    event.getEndDate(),
+                    event.getStartDate()
+            );
+            events.add(eventDTO);
+        });
+        return events;
+    }
+
+
 
 }

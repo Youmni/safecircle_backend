@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.checkerframework.checker.units.qual.C;
 import org.safecircle.backend.dto.CircleDTO;
 import org.safecircle.backend.dto.UserDTO;
+import org.safecircle.backend.dto.UserRequestDTO;
 import org.safecircle.backend.models.Circle;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.CircleService;
@@ -48,7 +49,7 @@ public class CircleController {
 
     @CrossOrigin
     @GetMapping(value = "/{circleId}/showAllUsers")
-    public ResponseEntity<List<UserDTO>> getAllUsersByCircleId(@PathVariable long circleId) {
+    public ResponseEntity<List<UserRequestDTO>> getAllUsersByCircleId(@PathVariable long circleId) {
         return circleService.getUsersByCircleId(circleId);
     }
 
