@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,25 +26,39 @@ public class CircleController {
 
     @CrossOrigin
     @GetMapping(value = "/{circleId}")
-    public ResponseEntity<Circle> getCircleById(@PathVariable long circleId) {
+    public ResponseEntity<CircleDTO> getCircleById(@PathVariable long circleId) {
         Circle circle = circleService.getCircleById(circleId);
         if(circle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         else{
-            return ResponseEntity.ok(circle);
+            CircleDTO circleDTO = new CircleDTO(
+                    circle.getCircleName(),
+                    circle.getCircleType(),
+                    circle.isAvailable()
+            );
+            return ResponseEntity.ok(circleDTO);
         }
     }
 
     @CrossOrigin
     @GetMapping(value = "/getAll/{userId}")
-    public ResponseEntity<List<Circle>> getCirclesByUserId(@PathVariable long userId) {
+    public ResponseEntity<List<CircleDTO>> getCirclesByUserId(@PathVariable long userId) {
         List<Circle> listCircles = circleService.getCirclesByUserId(userId);
         if(listCircles == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         else {
-            return ResponseEntity.ok(listCircles);
+            List<CircleDTO> circleDTOList = new ArrayList<>();
+            for(Circle circle : listCircles) {
+                CircleDTO circleDTO = new CircleDTO(
+                        circle.getCircleName(),
+                        circle.getCircleType(),
+                        circle.isAvailable()
+                );
+                circleDTOList.add(circleDTO);
+            }
+            return ResponseEntity.ok(circleDTOList);
         }
     }
 
