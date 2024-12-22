@@ -83,12 +83,8 @@ Post-requests:
 
 Put-requests:
     - To update a specific circle with circleId: http://localhost:8080/circle/{circleId}/update
-    RequestBody necessary (example):
-    {
-        "circleName" : "Test",
-        "circleType" : "REGULAR",
-        "available" : true
-    }
+    RequestParams not necessary (example):
+    Key: circleName; Value: Something
 
     - To remove specific user from a specific circle with circleId and userId: http://localhost:8080/circle/{circleId}/remove/{userId}
 

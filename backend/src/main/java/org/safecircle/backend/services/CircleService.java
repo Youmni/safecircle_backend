@@ -160,7 +160,6 @@ public class CircleService {
             }
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
 
-            System.out.println(circleDTO.getCircleName());
             circleRepository.save(circle);
             addUserToCircleCheck(circle.getCircleId(), userId);
 
@@ -171,18 +170,25 @@ public class CircleService {
         }
     }
 
-    public ResponseEntity<String> updateCircle(long circleId, CircleDTO circleDTO) {
+    public ResponseEntity<String> updateCircle(long circleId, String circleName) {
         try{
             if(!circleRepository.existsByCircleId(circleId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not found");
             }
             Circle circle = getCircleById(circleId);
-            circle.setCircleType(circleDTO.getCircleType());
-            circle.setAvailable(circleDTO.isAvailable());
-            circle.setCircleName(circleDTO.getCircleName());
-            circleRepository.save(circle);
+            boolean isChanged = false;
 
-            return ResponseEntity.ok("Successfully updated circle");
+            if(circleName != null && !circleName.isEmpty()) {
+                circle.setCircleName(circleName.trim());
+                isChanged = true;
+            }
+            if(isChanged){
+                circleRepository.save(circle);
+                return ResponseEntity.ok("Successfully updated circle");
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not updated");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("There was an error updating the Circle");
