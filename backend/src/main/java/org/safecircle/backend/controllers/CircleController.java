@@ -5,6 +5,7 @@ import org.checkerframework.checker.units.qual.C;
 import org.safecircle.backend.dto.CircleDTO;
 import org.safecircle.backend.dto.UserDTO;
 import org.safecircle.backend.dto.UserRequestDTO;
+import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.Circle;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.CircleService;
@@ -35,7 +36,8 @@ public class CircleController {
             CircleDTO circleDTO = new CircleDTO(
                     circle.getCircleName(),
                     circle.getCircleType(),
-                    circle.isAvailable()
+                    circle.isAvailable(),
+                    circle.getCircleId()
             );
             return ResponseEntity.ok(circleDTO);
         }
@@ -54,7 +56,8 @@ public class CircleController {
                 CircleDTO circleDTO = new CircleDTO(
                         circle.getCircleName(),
                         circle.getCircleType(),
-                        circle.isAvailable()
+                        circle.isAvailable(),
+                        circle.getCircleId()
                 );
                 circleDTOList.add(circleDTO);
             }
@@ -70,14 +73,14 @@ public class CircleController {
 
     @CrossOrigin
     @PostMapping(value = "/{userId}/create")
-    public ResponseEntity<String> createCircle(@PathVariable long userId, @Valid @RequestBody CircleDTO circle) {
-        return circleService.createCircle(userId, circle);
+    public ResponseEntity<String> createCircle(@PathVariable long userId, @Valid @RequestBody CircleDTO circleDTO) {
+        return circleService.createCircle(userId, circleDTO);
     }
 
     @CrossOrigin
     @PutMapping(value = "/{circleId}/update")
-    public ResponseEntity<String> updateCircle(@Valid @RequestBody CircleDTO circleDTO, @PathVariable long circleId) {
-        return circleService.updateCircle(circleId, circleDTO);
+    public ResponseEntity<String> updateCircle(@PathVariable long circleId, @RequestParam(required = false) String circleName) {
+        return circleService.updateCircle(circleId, circleName);
     }
 
     @CrossOrigin
