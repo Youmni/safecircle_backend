@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 public class EventDTO {
 
+
+    private long eventId;
     private int userCountEstimate;
     private String eventName;
     private EventStatus eventStatus;
@@ -22,6 +24,17 @@ public class EventDTO {
         this.location = location;
         this.endDate = endDate;
         this.startDate = startDate;
+    }
+
+    public EventDTO(long eventId, int userCountEstimate, String eventName, EventStatus eventStatus, String email, LocalDate startDate, LocalDate endDate, LocationDTO location) {
+        this.eventId = eventId;
+        this.userCountEstimate = userCountEstimate;
+        this.eventName = eventName;
+        this.eventStatus = eventStatus;
+        this.email = email;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.location = location;
     }
 
     public int getUserCountEstimate() {
@@ -78,5 +91,13 @@ public class EventDTO {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
     }
 }

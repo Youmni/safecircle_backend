@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
     public class UserRequestDTO {
 
+        private long userId;
         private String firstName;
         private String lastName;
         private String email;
@@ -22,6 +23,16 @@ import java.time.LocalDate;
                 this.phone = phone;
                 this.dateOfBirth = dateOfBirth;
             }
+
+        public UserRequestDTO(long userId, String firstName, String lastName, String email, String password, String phone, LocalDate dateOfBirth) {
+            this.userId = userId;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+            this.password = password;
+            this.phone = phone;
+            this.dateOfBirth = dateOfBirth;
+        }
 
         public String getFirstName() {
             return firstName;
@@ -69,5 +80,13 @@ import java.time.LocalDate;
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(long userId) {
+            this.userId = userId;
         }
     }
