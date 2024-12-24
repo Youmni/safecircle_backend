@@ -14,15 +14,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.safecircle.backend.dto.FcmTokenDTO;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.Duration;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
@@ -66,7 +65,7 @@ public class AlertService {
         this.circleAlertRepository = circleAlertRepository;
     }
 
-    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude) {
+    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
@@ -91,19 +90,19 @@ public class AlertService {
         }
     }
 
-    public ResponseEntity<String> sendAlert(AlertDTO alert) {
+    public ResponseEntity<String> sendAlert(long userId, AlertDTO alert) {
         if(!userService.isUserValid(alert.getUserId())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(UserService.USER_NOT_FOUND);
         }
 
         if(alert.getStatus().equals(SafetyStatus.UNSAFE)){
-            return sendUnsafeAlert(alert);
+            return sendUnsafeAlert(userId, alert);
         }else{
-            return sendSOSAlert(alert);
+            return sendSOSAlert(userId, alert);
         }
     }
 
-    public ResponseEntity<String> sendUnsafeAlert(AlertDTO alert) {
+    public ResponseEntity<String> sendUnsafeAlert(long userid, AlertDTO alert) {
         User user = userService.getUserById(alert.getUserId());
 
         if (!circleService.isUserInCircles(alert.getUserId(), alert.getCircles())) {
@@ -122,7 +121,7 @@ public class AlertService {
 
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
         locationRepository.save(alertLocation);
-        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user);
+        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user,alert.getDuration(), alert.setActive(true));
         alertRepository.save(alertSave);
 
         for (long circleId : alert.getCircles()) {
@@ -131,38 +130,50 @@ public class AlertService {
             circleAlertRepository.save(circleAlert);
         }
 
-        Set<Long> notifiedUserIds = new HashSet<>();
+        Set<Long> notifiedUserIds = Collections.synchronizedSet(new HashSet<>());
 
-        for (User userInCircle : usersInCircle) {
+        usersInCircle.parallelStream().forEach(userInCircle -> {
             if (notifiedUserIds.contains(userInCircle.getUserId())) {
-                continue;
+                return;
 
             }
             List<FcmToken> tokens = fcmTokenRepository.findByUser(userInCircle);
             if (!tokens.isEmpty()) {
-                    FcmToken token = tokens.get(0);
-                    sendNotification(
-                            token.getFcmToken(),
-                            "Unsafe Alert: " + user.getFirstName() + " " + user.getLastName(),
-                            alert.getDescription(),
-                            alert.getLocation().latitude(),
-                            alert.getLocation().longitude()
-                    );
-                    notifiedUserIds.add(userInCircle.getUserId());
-
+                FcmToken token = tokens.getFirst();
+                sendNotification(
+                        token.getFcmToken(),
+                        "Unsafe Alert: " + user.getFirstName() + " " + user.getLastName(),
+                        alert.getDescription(),
+                        alert.getLocation().latitude(),
+                        alert.getLocation().longitude(),
+                        alert.getUserId()
+                );
+                notifiedUserIds.add(userInCircle.getUserId());
             }
+
         }
+        );
 
         return ResponseEntity.status(HttpStatus.OK).body("Unsafe Alert: " + alert.getStatus());
     }
 
-    public ResponseEntity<String> sendSOSAlert(AlertDTO alert) {
+    public ResponseEntity<String> stopAlert(long UserId) {
+        User user = userService.getUserById(UserId);
+        Alert activeAlert = getActiveAlert(user.getUserId());
+
+       activeAlert.setIsactive(false);
+       activeAlert.setDurationOfAlert(Duration.between(activeAlert.getCreatedAt(), activeAlert.getUpdatedAt()));
+       alertRepository.save(activeAlert);
+        return ResponseEntity.status(HttpStatus.OK).body("Alert Stopped");
+    }
+
+    public ResponseEntity<String> sendSOSAlert(long userId, AlertDTO alert) {
         User user = userService.getUserById(alert.getUserId());
         List<User> users = userRepository.findAllByLocationIsNotNull();
 
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
         locationRepository.save(alertLocation);
-        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user);
+        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true));
         alertRepository.save(alertSave);
 
         Set<Long> notifiedUserIds = new HashSet<>();
@@ -174,10 +185,6 @@ public class AlertService {
                     userInArea.getLocation().getLatitude(),
                     userInArea.getLocation().getLongitude()
             );
-
-
-
-
 
             BigDecimal maxDistance = new BigDecimal("2.0");
             if (distance.compareTo(maxDistance) <= 0) {
@@ -191,7 +198,8 @@ public class AlertService {
                             "SOS Alert: " + alert.getStatus(),
                             alert.getDescription(),
                             alert.getLocation().latitude(),
-                            alert.getLocation().longitude()
+                            alert.getLocation().longitude(),
+                            userId
                     );
                     notifiedUserIds.add(userInArea.getUserId());
 
@@ -200,4 +208,27 @@ public class AlertService {
 
         return ResponseEntity.status(HttpStatus.OK).body("SOS Alert: " + alert.getStatus());
     }
+
+        public Alert getActiveAlert(long userId) {
+        User user = userService.getUserById(userId);
+        List<Alert> alerts = alertRepository.findByUser(user);
+
+
+        for (Alert alert : alerts) {
+            List<Alert> activeAlerts = alertRepository.findByAlertIsActive(true);
+
+            if (alert.getStatus().equals(SafetyStatus.UNSAFE)) {
+               CircleAlert circleAlert = alert.getCircleAlerts().iterator().next();
+                if (circleService.isUserInCircle(circleAlert.getCircle().getCircleId(), userId)){
+                    return activeAlerts.getFirst();
+                }
+            }
+
+            if (alert.getStatus().equals(SafetyStatus.SOS)) {
+                return activeAlerts.getFirst();
+            }
+        }
+        return null;
+    }
+
 }

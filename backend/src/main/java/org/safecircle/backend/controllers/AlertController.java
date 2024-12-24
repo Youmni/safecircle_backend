@@ -22,9 +22,9 @@ public class AlertController {
     }
 
     @CrossOrigin
-    @PostMapping("/send")
-    public ResponseEntity<String> SendAlert(@RequestBody AlertDTO alert) {
-        return alertService.sendAlert(alert);
+    @PostMapping("/{id}/send")
+    public ResponseEntity<String> SendAlert(@RequestParam long id, @RequestBody AlertDTO alert) {
+        return alertService.sendAlert(id, alert);
     }
 
 

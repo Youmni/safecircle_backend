@@ -11,8 +11,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.safecircle.backend.enums.SafetyStatus;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -58,13 +60,29 @@ public class Alert {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updatedAt;
+
+
+    @Column(name = "Duration")
+    private Duration durationOfAlert;
+
+    @NotNull(message = "Active must be set to true or false.")
+    @Column("Active")
+    private Boolean Isactive;
+
     protected Alert() {}
 
-    public Alert(SafetyStatus status, String description, Location location, User user) {
+    public Alert(SafetyStatus status, String description, Location location, User user, Duration durationOfAlert, Boolean Isactive) {
         this.status = status;
         this.description = description;
         this.location = location;
         this.user = user;
+        this.durationOfAlert = durationOfAlert;
+        this.Isactive = Isactive;
     }
 
     public long getAlertId() {
@@ -121,5 +139,29 @@ public class Alert {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Duration getDurationOfAlert() {
+        return durationOfAlert;
+    }
+
+    public void setDurationOfAlert(Duration durationOfAlert) {
+        this.durationOfAlert = durationOfAlert;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getIsactive() {
+        return Isactive;
+    }
+
+    public void setIsactive(@NotNull(message = "Active must be set to true or false.") Boolean isactive) {
+        Isactive = isactive;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
