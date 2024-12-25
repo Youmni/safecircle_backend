@@ -49,6 +49,12 @@ public class EventController {
     }
 
     @CrossOrigin
+    @GetMapping("/approved")
+    public List<Event> getApprovedEvents() {
+        return eventService.getAllApprovedEvents();
+    }
+
+    @CrossOrigin
     @GetMapping("/all")
     public List<EventDTO> GetAllEvents() {
         return eventService.getAllEvents();

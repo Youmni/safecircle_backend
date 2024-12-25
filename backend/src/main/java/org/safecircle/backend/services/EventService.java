@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.safecircle.backend.dto.UserDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -168,6 +169,16 @@ public class EventService {
                     event.getEndDate(),
                     new LocationDTO(event.getLocation().getLatitude(), event.getLocation().getLongitude()));
             events.add(eventDTO);
+        });
+        return events;
+    }
+
+    public List<Event> getAllApprovedEvents(){
+        List<Event> events = new ArrayList<>();
+        eventRepository.findByEventStatus(EventStatus.APPROVED).forEach(event -> {
+            if (event.getStartDate().plusDays(2).isAfter(LocalDate.now())) {
+                events.add(event);
+            }
         });
         return events;
     }
