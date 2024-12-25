@@ -68,21 +68,21 @@ public class Alert {
 
 
     @Column(name = "Duration")
-    private Duration durationOfAlert;
+    private String durationOfAlert;
 
     @NotNull(message = "Active must be set to true or false.")
-    @Column("Active")
-    private Boolean Isactive;
+    @Column(name = "Active")
+    private Boolean isActive;
 
     protected Alert() {}
 
-    public Alert(SafetyStatus status, String description, Location location, User user, Duration durationOfAlert, Boolean Isactive) {
+    public Alert(SafetyStatus status, String description, Location location, User user, String durationOfAlert, Boolean Isactive) {
         this.status = status;
         this.description = description;
         this.location = location;
         this.user = user;
         this.durationOfAlert = durationOfAlert;
-        this.Isactive = Isactive;
+        this.isActive = Isactive;
     }
 
     public long getAlertId() {
@@ -141,20 +141,20 @@ public class Alert {
         this.createdAt = createdAt;
     }
 
-    public Duration getDurationOfAlert() {
+    public String getDurationOfAlert() {
         return durationOfAlert;
     }
 
-    public void setDurationOfAlert(Duration durationOfAlert) {
+    public void setDurationOfAlert(String durationOfAlert) {
         this.durationOfAlert = durationOfAlert;
     }
 
-    public @NotNull(message = "Active must be set to true or false.") Boolean getIsactive() {
-        return Isactive;
+    public @NotNull(message = "Active must be set to true or false.") Boolean getisActive() {
+        return isActive;
     }
 
-    public void setIsactive(@NotNull(message = "Active must be set to true or false.") Boolean isactive) {
-        Isactive = isactive;
+    public void setisActive(@NotNull(message = "Active must be set to true or false.") Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -163,5 +163,13 @@ public class Alert {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

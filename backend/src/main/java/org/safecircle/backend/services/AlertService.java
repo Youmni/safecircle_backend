@@ -4,7 +4,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import org.safecircle.backend.dto.AlertDTO;
+import jakarta.transaction.Transactional;
+import org.safecircle.backend.dto.*;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.enums.SafetyStatus;
 import org.safecircle.backend.models.*;
@@ -16,13 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.safecircle.backend.dto.FcmTokenDTO;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class AlertService {
@@ -121,7 +123,7 @@ public class AlertService {
 
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
         locationRepository.save(alertLocation);
-        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user,alert.getDuration(), alert.setActive(true));
+        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true));
         alertRepository.save(alertSave);
 
         for (long circleId : alert.getCircles()) {
@@ -157,17 +159,57 @@ public class AlertService {
         return ResponseEntity.status(HttpStatus.OK).body("Unsafe Alert: " + alert.getStatus());
     }
 
-    public ResponseEntity<String> stopAlert(long UserId) {
-        User user = userService.getUserById(UserId);
-        Alert activeAlert = getActiveAlert(user.getUserId());
+    public ResponseEntity<String> stopAlert(long userId) {
+        ActiveAlertDTO activeAlert = getActiveAlert(userId);
+        if (activeAlert == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No active alert found for the user");
+        }
 
-       activeAlert.setIsactive(false);
-       activeAlert.setDurationOfAlert(Duration.between(activeAlert.getCreatedAt(), activeAlert.getUpdatedAt()));
-       alertRepository.save(activeAlert);
+        Alert alert = alertRepository.findByAlertId(activeAlert.getAlertId()).getFirst();
+        if (alert == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Alert not found");
+        }
+
+        if (activeAlert.getCreatedAt() == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Alert creation time is missing");
+        }
+
+        alert.setisActive(false);
+        alert.setUpdatedAt(LocalDateTime.now());
+
+        if (alert.getUpdatedAt() != null) {
+            Duration duration = Duration.between(activeAlert.getCreatedAt(), alert.getUpdatedAt());
+            String formattedDuration = formatDuration(duration);
+
+            alert.setDurationOfAlert(formattedDuration);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to set alert update time");
+        }
+
+        alertRepository.save(alert);
         return ResponseEntity.status(HttpStatus.OK).body("Alert Stopped");
     }
 
-    public ResponseEntity<String> sendSOSAlert(long userId, AlertDTO alert) {
+    @Transactional
+    @Scheduled(fixedRate = 300000)
+    public void stopAlertsAfter12Hours() {
+        List<Alert> activeAlerts = alertRepository.findByIsActive(true);
+
+        for (Alert alert : activeAlerts) {
+            if (alert.getCreatedAt() != null && alert.getCreatedAt().isBefore(LocalDateTime.now().minusHours(12))) {
+                try {
+                    stopAlert(alert.getUser().getUserId());
+                    System.out.println("Alert stopped after 12 hours for user ID: " + alert.getUser().getUserId());
+                } catch (Exception e) {
+                    System.err.println("Failed to stop alert for user ID: " + alert.getUser().getUserId());
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("Checked for alerts older than 12 hours.");
+    }
+
+        public ResponseEntity<String> sendSOSAlert(long userId, AlertDTO alert) {
         User user = userService.getUserById(alert.getUserId());
         List<User> users = userRepository.findAllByLocationIsNotNull();
 
@@ -209,26 +251,66 @@ public class AlertService {
         return ResponseEntity.status(HttpStatus.OK).body("SOS Alert: " + alert.getStatus());
     }
 
-        public Alert getActiveAlert(long userId) {
+        public ActiveAlertDTO getActiveAlert(long userId) {
         User user = userService.getUserById(userId);
         List<Alert> alerts = alertRepository.findByUser(user);
 
 
         for (Alert alert : alerts) {
-            List<Alert> activeAlerts = alertRepository.findByAlertIsActive(true);
+            if (alert.getisActive()) {
 
-            if (alert.getStatus().equals(SafetyStatus.UNSAFE)) {
-               CircleAlert circleAlert = alert.getCircleAlerts().iterator().next();
-                if (circleService.isUserInCircle(circleAlert.getCircle().getCircleId(), userId)){
-                    return activeAlerts.getFirst();
+
+                if (alert.getStatus().equals(SafetyStatus.UNSAFE)) {
+                    CircleAlert circleAlert = alert.getCircleAlerts().iterator().next();
+                    if (circleService.isUserInCircle(circleAlert.getCircle().getCircleId(), userId)) {
+                        return new ActiveAlertDTO(
+                                new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                                alert.getUser().getUserId(),
+                                alert.getUser().getFirstName(),
+                                alert.getUser().getLastName(),
+                                alert.getCreatedAt(),
+                                alert.getStatus(),
+                                alert.getAlertId()
+                        );
+                    } else {
+                        ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not in the circle of the alert");
+                    }
+                }
+
+                if (alert.getStatus().equals(SafetyStatus.SOS)) {
+                    return new ActiveAlertDTO(
+                            new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                            alert.getUser().getUserId(),
+                            alert.getUser().getFirstName(),
+                            alert.getUser().getLastName(),
+                            alert.getCreatedAt(),
+                            alert.getStatus(),
+                            alert.getAlertId()
+                    );
                 }
             }
-
-            if (alert.getStatus().equals(SafetyStatus.SOS)) {
-                return activeAlerts.getFirst();
-            }
         }
-        return null;
+            return null;
     }
 
+    public String formatDuration(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        long seconds = duration.getSeconds() % 60;
+
+        return String.format("%d:%02d:%02d:%02d", days, hours, minutes, seconds);
+    }
+
+    public List<RequestAlertDTO> getLatestAlert() {
+        return alertRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1)).stream()
+                .map(alert -> new RequestAlertDTO(
+                    new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                    alert.getUser().getFirstName(),
+                    alert.getUser().getLastName(),
+                    alert.getStatus(),
+                    alert.getDescription()
+                ))
+                .collect(Collectors.toList());
+    }
 }

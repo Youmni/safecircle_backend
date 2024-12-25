@@ -171,4 +171,42 @@ Put-requests:
     RequestParams not all necessary (example):
     Key: status; Value: Updated CLOSED
 
+#Alert
+
+Get-requests:
+    -To get all alerts within 24 hours: http://localhost:8080/alert/latest
+
+Post-requests:
+    -To send a notificaion to all users: http://localhost:8080/alert/{id}/send
+    for unsafe
+    RequestBody necessary (example):
+    {
+        "userId": 7,
+        "status": "UNSAFE",
+        "description": "Emergency alert in the area",
+        "location": {
+            "latitude": 52.5200,
+            "longitude": 13.4050
+        },
+        "circles":[1]
+    }
+    for SOS
+    RequestBody necessary (example):
+   {
+       "userId": 7,
+       "status": "SOS",
+       "description": "Emergency alert in the area",
+       "location": {
+           "latitude": 52.5200,
+           "longitude": 13.4050
+       }
+
+   }
+
+   -To stop a notification manually: http://localhost:8080/alert/{id}/stop
+   No RequestBody necessary
+
+
+
+
 

@@ -21,7 +21,7 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findByCreatedAtAfter(LocalDateTime after);
     List<Alert> findByUser(User user);
     List<Alert> findByUserAndAlertId(User user, Long alertId);
-    List<Alert> findByAlertIsActive(boolean active);
+    List<Alert> findByIsActive(boolean isActive);
 
     boolean existsByAlertId(long alertId);
 }
