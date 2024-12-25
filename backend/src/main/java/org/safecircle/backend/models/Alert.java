@@ -74,15 +74,22 @@ public class Alert {
     @Column(name = "Active")
     private Boolean isActive;
 
+    @NotNull(message = "Active must be set to true or false.")
+    @Column(name = "FirstNotification")
+    private Boolean isFirstNotification;
+
+
+
     protected Alert() {}
 
-    public Alert(SafetyStatus status, String description, Location location, User user, String durationOfAlert, Boolean Isactive) {
+    public Alert(SafetyStatus status, String description, Location location, User user, String durationOfAlert, Boolean Isactive, Boolean isFirstNotification) {
         this.status = status;
         this.description = description;
         this.location = location;
         this.user = user;
         this.durationOfAlert = durationOfAlert;
         this.isActive = Isactive;
+        this.isFirstNotification = isFirstNotification;
     }
 
     public long getAlertId() {
@@ -171,5 +178,21 @@ public class Alert {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getFirstNotification() {
+        return isFirstNotification;
+    }
+
+    public void setFirstNotification(@NotNull(message = "Active must be set to true or false.") Boolean firstNotification) {
+        isFirstNotification = firstNotification;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(@NotNull(message = "Active must be set to true or false.") Boolean active) {
+        isActive = active;
     }
 }

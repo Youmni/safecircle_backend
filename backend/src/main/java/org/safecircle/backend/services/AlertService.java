@@ -67,7 +67,7 @@ public class AlertService {
         this.circleAlertRepository = circleAlertRepository;
     }
 
-    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId) {
+    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId, String firstname, String lastname) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
@@ -120,10 +120,9 @@ public class AlertService {
             List<CircleUser> circleUsers = circleUserRepository.findByCircle(circle);
             circleUsers.forEach(circleUser -> usersInCircle.add(circleUser.getUser()));
         }
-
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
         locationRepository.save(alertLocation);
-        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true));
+        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true), alert.setFirstNotification(true));
         alertRepository.save(alertSave);
 
         for (long circleId : alert.getCircles()) {
@@ -142,19 +141,34 @@ public class AlertService {
             List<FcmToken> tokens = fcmTokenRepository.findByUser(userInCircle);
             if (!tokens.isEmpty()) {
                 FcmToken token = tokens.getFirst();
+
+                Location locationToSend;
+                if (alertSave.getFirstNotification()){
+                    locationToSend = alertLocation;
+                }
+                else {
+                    locationToSend = user.getLocation();
+                }
+
                 sendNotification(
                         token.getFcmToken(),
                         "Unsafe Alert: " + user.getFirstName() + " " + user.getLastName(),
                         alert.getDescription(),
-                        alert.getLocation().latitude(),
-                        alert.getLocation().longitude(),
-                        alert.getUserId()
+                        locationToSend.getLatitude(),
+                        locationToSend.getLongitude(),
+                        alert.getUserId(),
+                        user.getFirstName(),
+                        user.getLastName()
                 );
                 notifiedUserIds.add(userInCircle.getUserId());
             }
-
         }
         );
+
+        if (alertSave.getFirstNotification()) {
+            alertSave.setFirstNotification(false);
+            alertRepository.save(alertSave);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body("Unsafe Alert: " + alert.getStatus());
     }
@@ -215,7 +229,7 @@ public class AlertService {
 
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
         locationRepository.save(alertLocation);
-        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true));
+        Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true), alert.setFirstNotification(true));
         alertRepository.save(alertSave);
 
         Set<Long> notifiedUserIds = new HashSet<>();
@@ -235,19 +249,34 @@ public class AlertService {
                 }
                 List<FcmToken> tokens = fcmTokenRepository.findByUser(userInArea);
                 FcmToken token = tokens.get(0);
+
+                Location locationToSend;
+                if (alertSave.getFirstNotification()){
+                    locationToSend = alertLocation;
+                }
+                else {
+                    locationToSend = user.getLocation();
+                }
+
                     sendNotification(
                             token.getFcmToken(),
                             "SOS Alert: " + alert.getStatus(),
                             alert.getDescription(),
-                            alert.getLocation().latitude(),
-                            alert.getLocation().longitude(),
-                            userId
+                            locationToSend.getLatitude(),
+                            locationToSend.getLongitude(),
+                            userId,
+                            user.getFirstName(),
+                            user.getLastName()
                     );
                     notifiedUserIds.add(userInArea.getUserId());
 
             }
         }
 
+            if (alertSave.getFirstNotification()) {
+                alertSave.setFirstNotification(false);
+                alertRepository.save(alertSave);
+            }
         return ResponseEntity.status(HttpStatus.OK).body("SOS Alert: " + alert.getStatus());
     }
 
