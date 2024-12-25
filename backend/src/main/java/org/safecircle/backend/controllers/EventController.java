@@ -3,6 +3,7 @@ package org.safecircle.backend.controllers;
 import jakarta.validation.Valid;
 import org.safecircle.backend.dto.EventDTO;
 import org.safecircle.backend.enums.EventStatus;
+import org.safecircle.backend.models.Event;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,28 @@ public class EventController {
     }
 
     @CrossOrigin
-    @PostMapping("/add")
-    public ResponseEntity<String> AddEvent(@Valid @RequestBody EventDTO event) {
-        return eventService.createEvent(event);
+    @PostMapping("/{id}/create")
+    public ResponseEntity<String> AddEvent(@PathVariable long id, @Valid @RequestBody EventDTO event) {
+        return eventService.createEvent(id, event);
     }
 
     @CrossOrigin
-    @PostMapping("/request")
-    public ResponseEntity<String> AddEventRequest(@Valid @RequestBody EventDTO event) {
+    @PostMapping("/{id}/update")
+    public ResponseEntity<String> UpdateEvent(@PathVariable long id, @Valid @RequestBody EventDTO event) {
+        return eventService.UpdateEventById(id, event);
+    }
+
+    @CrossOrigin
+    @PostMapping("/{eventid}/add/{userId}")
+    public ResponseEntity<String> AddUsersToEvent( @PathVariable long eventid, @PathVariable List<Long> userId) {
+        return eventService.AddUsersToEvent(eventid, userId);
+    }
+
+    @CrossOrigin
+    @PostMapping("/{id}/request")
+    public ResponseEntity<String> AddEventRequest(@PathVariable long id, @Valid @RequestBody EventDTO event) {
         event.setEventStatus(EventStatus.PENDING);
-        return eventService.createEvent(event);
+        return eventService.createEvent(id, event);
     }
 
     @CrossOrigin

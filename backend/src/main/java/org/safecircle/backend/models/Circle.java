@@ -1,6 +1,7 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -48,6 +49,10 @@ public class Circle {
 
     @OneToMany(mappedBy = "circle", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Invitation> invitations;
+
+    @OneToOne(mappedBy = "circle", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("event-circle")
+    private Event event;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -125,5 +130,29 @@ public class Circle {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<CircleAlert> getCircleAlerts() {
+        return circleAlerts;
+    }
+
+    public void setCircleAlerts(Set<CircleAlert> circleAlerts) {
+        this.circleAlerts = circleAlerts;
+    }
+
+    public Set<CircleUser> getCircleUsers() {
+        return circleUsers;
+    }
+
+    public void setCircleUsers(Set<CircleUser> circleUsers) {
+        this.circleUsers = circleUsers;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

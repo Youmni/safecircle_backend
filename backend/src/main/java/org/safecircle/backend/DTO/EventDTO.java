@@ -14,17 +14,8 @@ public class EventDTO {
     private String email;
     private LocalDate startDate;
     private LocalDate endDate;
+    private long circleid;
     private LocationDTO location;
-
-    public EventDTO(int userCountEstimate, String eventName, EventStatus eventStatus, String email, LocationDTO location, LocalDate endDate, LocalDate startDate) {
-        this.userCountEstimate = userCountEstimate;
-        this.eventName = eventName;
-        this.eventStatus = eventStatus;
-        this.email = email;
-        this.location = location;
-        this.endDate = endDate;
-        this.startDate = startDate;
-    }
 
     public EventDTO(long eventId, int userCountEstimate, String eventName, EventStatus eventStatus, String email, LocalDate startDate, LocalDate endDate, LocationDTO location) {
         this.eventId = eventId;
@@ -34,6 +25,7 @@ public class EventDTO {
         this.email = email;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.circleid = circleid;
         this.location = location;
     }
 
@@ -99,5 +91,13 @@ public class EventDTO {
 
     public void setEventId(long eventId) {
         this.eventId = eventId;
+    }
+
+    public long getCircleid() {
+        return circleid;
+    }
+
+    public void setCircleid(long circleid) {
+        this.circleid = circleid;
     }
 }

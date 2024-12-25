@@ -1,6 +1,7 @@
 package org.safecircle.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -66,10 +67,16 @@ public class Event {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedAt;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "circle_id", referencedColumnName = "circle_id")
+    @JsonManagedReference("event-circle")
+    private Circle circle;
+
+
     protected Event() {
     }
 
-    public Event(int userCountEstimate, String eventName, String email, EventStatus eventStatus, LocalDate startDate, LocalDate endDate, Location location) {
+    public Event(int userCountEstimate, String eventName, String email, EventStatus eventStatus, LocalDate startDate, LocalDate endDate, Location location, Circle circle) {
         this.userCountEstimate = userCountEstimate;
         this.eventName = eventName;
         this.email = email;
@@ -77,6 +84,7 @@ public class Event {
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;
+        this.circle = circle;
     }
 
     public long getEventId() {
@@ -159,5 +167,13 @@ public class Event {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public void setCircle(Circle circle) {
+        this.circle = circle;
     }
 }

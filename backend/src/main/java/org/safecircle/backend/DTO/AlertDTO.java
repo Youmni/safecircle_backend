@@ -16,7 +16,7 @@ public class AlertDTO {
     private long userId;
     private List<Long> circles;
     private Boolean isActive;
-    private Duration duration;
+    private String duration;
 
     public AlertDTO() {
     }
@@ -85,11 +85,11 @@ public class AlertDTO {
        return isActive = active;
     }
 
-    public Duration getDuration() {
+    public String getDuration() {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
     }
 }
