@@ -1,7 +1,7 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.safecircle.backend.dto.*;
+import org.safecircle.backend.dtos.*;
 import org.safecircle.backend.models.Blacklist;
 import org.safecircle.backend.models.CircleUser;
 import org.safecircle.backend.models.User;
