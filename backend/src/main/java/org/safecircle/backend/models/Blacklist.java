@@ -53,10 +53,11 @@ public class Blacklist {
 
     protected Blacklist() {}
 
-    public Blacklist(String description, LocalDate startDate, LocalDate endDate) {
+    public Blacklist(String description, LocalDate startDate, LocalDate endDate, User user) {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.user = user;
     }
 
     public long getBlacklistId() {
@@ -97,5 +98,13 @@ public class Blacklist {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

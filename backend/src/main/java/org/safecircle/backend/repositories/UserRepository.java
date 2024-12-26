@@ -1,11 +1,14 @@
 package org.safecircle.backend.repositories;
 
 import org.safecircle.backend.enums.UserType;
+import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.models.User;
+import org.safecircle.backend.models.UserAlert;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -40,6 +43,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUpdatedAtBetween(LocalDateTime from, LocalDateTime to);
     List<User> findByUpdatedAtBefore(LocalDateTime time);
     List<User> findByUpdatedAtAfter(LocalDateTime time);
+
+    List<User> findByUserAlerts(Set<UserAlert> userAlerts);
 
     boolean existsByUserId(long userId);
     boolean existsByEmail(String email);

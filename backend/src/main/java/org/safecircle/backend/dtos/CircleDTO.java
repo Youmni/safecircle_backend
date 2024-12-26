@@ -1,4 +1,4 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 import org.safecircle.backend.enums.CircleType;
 
@@ -6,6 +6,7 @@ public class CircleDTO {
     private String CircleName;
     private CircleType CircleType;
     private boolean available;
+    private long circleId;
 
     public CircleDTO() {
     }
@@ -14,6 +15,13 @@ public class CircleDTO {
         CircleName = circleName;
         CircleType = circleType;
         this.available = available;
+    }
+
+    public CircleDTO(String circleName, org.safecircle.backend.enums.CircleType circleType, boolean available, long circleId) {
+        CircleName = circleName;
+        CircleType = circleType;
+        this.available = available;
+        this.circleId = circleId;
     }
 
     public String getCircleName() {
@@ -38,5 +46,13 @@ public class CircleDTO {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public long getCircleId() {
+        return circleId;
+    }
+
+    public void setCircleId(long circleId) {
+        this.circleId = circleId;
     }
 }

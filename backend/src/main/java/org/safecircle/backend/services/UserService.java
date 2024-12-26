@@ -1,17 +1,11 @@
 package org.safecircle.backend.services;
 
 import com.nimbusds.jose.JOSEException;
-import org.safecircle.backend.dto.*;
+import org.safecircle.backend.dtos.*;
 import org.safecircle.backend.config.JwtService;
 import org.safecircle.backend.enums.UserType;
-import org.safecircle.backend.models.CircleUser;
-import org.safecircle.backend.models.Location;
-import org.safecircle.backend.models.User;
-import org.safecircle.backend.models.UserAlert;
-import org.safecircle.backend.repositories.CircleUserRepository;
-import org.safecircle.backend.repositories.LocationRepository;
-import org.safecircle.backend.repositories.UserAlertRepository;
-import org.safecircle.backend.repositories.UserRepository;
+import org.safecircle.backend.models.*;
+import org.safecircle.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -45,6 +41,8 @@ public class UserService {
     private JwtService jwtService;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -61,13 +59,19 @@ public class UserService {
         this.circleUserRepository = circleUserRepository;
     }
 
-    public ResponseEntity<String> createUser(UserDTO userDTO) {
+    public ResponseEntity<String> createUser(UserRequestDTO userDTO) {
         try{
             if(userRepository.existsByEmail(userDTO.getEmail())){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(ALREADY_EXISTS);
             }
+            LocalDate today = LocalDate.now();
+            LocalDate dateOfBirth = userDTO.getDateOfBirth();
 
+            int age = Period.between(dateOfBirth, today).getYears();
+            if (age < 13) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must be at least 13 years old");
+            }
 
             User user = new User(
                     userDTO.getFirstName(),
@@ -75,6 +79,7 @@ public class UserService {
                     userDTO.getEmail(),
                     bCryptPasswordEncoder.encode(userDTO.getPassword()),
                     userDTO.getPhone(),
+                    userDTO.getDateOfBirth(),
                     UserType.USER
                     );
 
@@ -102,7 +107,7 @@ public class UserService {
 
     public ResponseEntity<?> refreshToken(RefreshTokenRequest request) {
         try{
-            String refreshToken = request.getRefrechToken();
+            String refreshToken = request.getRefreshToken();
             if(!jwtService.validateToken(refreshToken)){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
             }
@@ -120,8 +125,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<String> updateUser(long userId, String firstName, String lastName, String email,String phoneNumber, String password) {
-
+    public ResponseEntity<String> updateUser(long userId, String firstName, String lastName, String email, String phoneNumber, String password, LocalDate dateOfBirth) {
         boolean isChanged = false;
 
         if (!isUserValid(userId)) {
@@ -129,38 +133,48 @@ public class UserService {
         }
         try {
             User user = getUserById(userId);
+            LocalDate today = LocalDate.now();
 
-            if(firstName != null && !firstName.isEmpty()  && (lastName.trim().length() >= 2 && lastName.trim().length() <= 40)){
+            if (firstName != null && !firstName.isEmpty()) {
                 user.setFirstName(firstName.trim());
                 isChanged = true;
             }
-            if(lastName != null && !lastName.isEmpty() && (lastName.trim().length() >= 2 && lastName.trim().length() <= 50)){
+            if (lastName != null && !lastName.isEmpty()) {
                 user.setLastName(lastName.trim());
                 isChanged = true;
             }
-            if(email != null && !email.isEmpty()){
-                if(isValidEmail(email)){
+            if (email != null && !email.isEmpty()) {
+                if (isValidEmail(email)) {
                     user.setEmail(email.trim());
                     isChanged = true;
                 }
             }
-            if(phoneNumber != null && !phoneNumber.isEmpty()){
+            if (phoneNumber != null && !phoneNumber.isEmpty()) {
                 user.setPhoneNumber(phoneNumber.trim());
                 isChanged = true;
             }
-            if(password != null && !password.isEmpty() && (password.length()> 8 && password.length() < 40 )){
+            if (password != null && !password.isEmpty() && (password.length() > 8 && password.length() < 40)) {
                 user.setPassword(bCryptPasswordEncoder.encode(password));
                 isChanged = true;
             }
+            if (dateOfBirth != null) {
+                if (Period.between(dateOfBirth, today).getYears() < 13){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The user needs to be 13 years old minimum");
+                }
+                else{
+                    user.setDateOfBirth(dateOfBirth);
+                    isChanged = true;
+                }
+            }
 
-            if(isChanged){
+            if (isChanged) {
                 userRepository.save(user);
                 return ResponseEntity.status(HttpStatus.OK).body(USER_UPDATED);
-            }else{
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nothing to update");
             }
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured: could not update user");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: could not update user");
         }
     }
 
@@ -238,18 +252,18 @@ public class UserService {
         return new ArrayList<>(users);
     }
 
-    public ResponseEntity<String> registerFcmToken(FcmTokenDTO fcmTokenDTO) {
-            List<User> users = userRepository.findByEmail(fcmTokenDTO.getEmail());
+    public ResponseEntity<String> registerFcmToken(long userId, FcmTokenDTO fcmTokenDTO) {
 
-            if (!users.isEmpty()) {
-                for (User user : users) {
-                    fcmTokenDTO.setFcmToken(fcmTokenDTO.getFcmToken());
-                    userRepository.save(user);
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with email " + fcmTokenDTO.getEmail() + " not found!");
-            }
+        if(!isUserValid(userId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(USER_NOT_FOUND);
+        }
+        User user = getUserById(userId);
+        FcmToken fcmToken = new FcmToken(
+                user,
+                fcmTokenDTO.getFcmToken()
+        );
+        fcmTokenRepository.save(fcmToken);
+
         return ResponseEntity.ok("FCM Tokens registered successfully!");
     }
 

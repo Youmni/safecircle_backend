@@ -58,6 +58,14 @@ public class Report {
         this.status = status;
     }
 
+    public Report(String subject, String description, String email, ReportStatus status, User user) {
+        this.subject = subject;
+        this.description = description;
+        this.email = email;
+        this.status = status;
+        this.user = user;
+    }
+
     public long getReportId() {
         return reportId;
     }
@@ -96,5 +104,13 @@ public class Report {
 
     public void setSubject(@NotEmpty(message = "You need to provide a subject for the report") @Size(min = 2, max = 40, message = "The subject needs to be between 2 and 40 characters long") String subject) {
         this.subject = subject;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

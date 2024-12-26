@@ -33,7 +33,7 @@ public class LocationService {
         BigDecimal latDistance = toRadians(latitude2.subtract(latitude1));
         BigDecimal lonDistance = toRadians(longitude2.subtract(longitude1));
 
-        // Haversine-formule
+        // Haversine formula
         BigDecimal a = sin(latDistance.divide(new BigDecimal(2), MATH_CONTEXT)).pow(2)
                 .add(
                         cos(toRadians(latitude1))
@@ -78,14 +78,11 @@ public class LocationService {
     }
 
     public Location getLocationById(long locationId) {
-        if(!locationRepository.existsById(locationId)) {
-            return null;
-        }
-        return getLocationById(locationId);
+        return locationRepository.findById(locationId).orElse(null);
     }
 
     public boolean isValidLocationId(long locationId) {
-        return locationRepository.existsByLocationId(locationId);
+        return locationRepository.existsById(locationId);
     }
 
 }

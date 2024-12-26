@@ -1,8 +1,8 @@
 package org.safecircle.backend.services;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import org.safecircle.backend.dto.CircleDTO;
+import org.safecircle.backend.dtos.CircleDTO;
+import org.safecircle.backend.dtos.CircleRequestDTO;
+import org.safecircle.backend.dtos.UserRequestDTO;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
@@ -55,6 +55,28 @@ public class CircleService {
         User user = getUserById(userId);
         List<CircleUser> listCirclesUsers = circleUserRepository.findByUser(user);
         return listCirclesUsers.stream().map(CircleUser::getCircle).toList();
+    }
+
+    public ResponseEntity<List<UserRequestDTO>> getUsersByCircleId(long circleId) {
+        if(!circleRepository.existsByCircleId(circleId)) {
+            return null;
+        }
+        List<CircleUser> circleUserList = circleUserRepository.findByCircle(circleRepository.findByCircleId(circleId).getFirst());
+        List<UserRequestDTO> userDTOList = new ArrayList<>();
+        for (CircleUser circleUser : circleUserList) {
+            User user = circleUser.getUser();
+            UserRequestDTO userDTO = new UserRequestDTO(
+                    user.getUserId(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    null,
+                    user.getPhoneNumber(),
+                    user.getDateOfBirth()
+            );
+            userDTOList.add(userDTO);
+        }
+        return ResponseEntity.ok(userDTOList);
     }
 
     public ResponseEntity<String> addUsersToCircle(long circleId, List<Long> userIds) {
@@ -134,7 +156,6 @@ public class CircleService {
             }
             Circle circle = new Circle(circleDTO.getCircleType(), circleDTO.isAvailable(), circleDTO.getCircleName());
 
-            System.out.println(circleDTO.getCircleName());
             circleRepository.save(circle);
             addUserToCircleCheck(circle.getCircleId(), userId);
 
@@ -145,18 +166,25 @@ public class CircleService {
         }
     }
 
-    public ResponseEntity<String> updateCircle(long circleId, CircleDTO circleDTO) {
+    public ResponseEntity<String> updateCircle(long circleId, String circleName) {
         try{
             if(!circleRepository.existsByCircleId(circleId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not found");
             }
             Circle circle = getCircleById(circleId);
-            circle.setCircleType(circleDTO.getCircleType());
-            circle.setAvailable(circleDTO.isAvailable());
-            circle.setCircleName(circleDTO.getCircleName());
-            circleRepository.save(circle);
+            boolean isChanged = false;
 
-            return ResponseEntity.ok("Successfully updated circle");
+            if(circleName != null && !circleName.isEmpty()) {
+                circle.setCircleName(circleName.trim());
+                isChanged = true;
+            }
+            if(isChanged){
+                circleRepository.save(circle);
+                return ResponseEntity.ok("Successfully updated circle");
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Circle not updated");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("There was an error updating the Circle");
@@ -186,6 +214,19 @@ public class CircleService {
                     .body("There was an error deleting the Circle");
         }
     }
+    public List<CircleRequestDTO> getCircleByType(CircleType type) {
+        return circleRepository.findByCircleType(type).stream()
+                .map(circle -> new CircleRequestDTO(
+                        circle.getCircleId(),
+                        circle.getCircleName(),
+                        circle.getCircleType(),
+                        circle.isAvailable(),
+                        circle.getCreatedAt(),
+                        circle.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     public boolean isCircleValid(long circleId) {
         return circleRepository.existsByCircleId(circleId);

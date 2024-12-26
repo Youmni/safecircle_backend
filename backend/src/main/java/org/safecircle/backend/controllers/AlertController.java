@@ -1,15 +1,13 @@
 package org.safecircle.backend.controllers;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
-import jakarta.servlet.http.HttpServletRequest;
-import org.safecircle.backend.dto.AlertDTO;
-import org.safecircle.backend.models.Alert;
+import org.safecircle.backend.dtos.AlertDTO;
+import org.safecircle.backend.dtos.RequestAlertDTO;
 import org.safecircle.backend.services.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/alert")
@@ -22,10 +20,21 @@ public class AlertController {
     }
 
     @CrossOrigin
-    @PostMapping("/send")
-    public ResponseEntity<String> SendAlert(@RequestBody AlertDTO alert) {
-        return alertService.sendAlert(alert);
+    @PostMapping("/{id}/send")
+    public ResponseEntity<String> SendAlert(@PathVariable long id, @RequestBody AlertDTO alert) {
+        return alertService.sendAlert(id, alert);
     }
 
+    @CrossOrigin
+    @PostMapping("/{id}/stop")
+    public ResponseEntity<String> StopAlert(@PathVariable long id) {
+        return alertService.stopAlert(id);
+    }
+
+    @CrossOrigin
+    @GetMapping("/latest")
+    public List<RequestAlertDTO> getLatestAlert() {
+        return alertService.getLatestAlert();
+    }
 
 }

@@ -11,8 +11,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.safecircle.backend.enums.SafetyStatus;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -58,12 +60,36 @@ public class Alert {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updatedAt;
+
+
+    @Column(name = "Duration")
+    private String durationOfAlert;
+
+    @NotNull(message = "Active must be set to true or false.")
+    @Column(name = "Active")
+    private Boolean isActive;
+
+    @NotNull(message = "Active must be set to true or false.")
+    @Column(name = "FirstNotification")
+    private Boolean isFirstNotification;
+
+
+
     protected Alert() {}
 
-    public Alert(SafetyStatus status, String description, Location location) {
+    public Alert(SafetyStatus status, String description, Location location, User user, String durationOfAlert, Boolean Isactive, Boolean isFirstNotification) {
         this.status = status;
         this.description = description;
         this.location = location;
+        this.user = user;
+        this.durationOfAlert = durationOfAlert;
+        this.isActive = Isactive;
+        this.isFirstNotification = isFirstNotification;
     }
 
     public long getAlertId() {
@@ -120,5 +146,53 @@ public class Alert {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getDurationOfAlert() {
+        return durationOfAlert;
+    }
+
+    public void setDurationOfAlert(String durationOfAlert) {
+        this.durationOfAlert = durationOfAlert;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getisActive() {
+        return isActive;
+    }
+
+    public void setisActive(@NotNull(message = "Active must be set to true or false.") Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getFirstNotification() {
+        return isFirstNotification;
+    }
+
+    public void setFirstNotification(@NotNull(message = "Active must be set to true or false.") Boolean firstNotification) {
+        isFirstNotification = firstNotification;
+    }
+
+    public @NotNull(message = "Active must be set to true or false.") Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(@NotNull(message = "Active must be set to true or false.") Boolean active) {
+        isActive = active;
     }
 }

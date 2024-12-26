@@ -1,16 +1,8 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 public class FcmTokenDTO {
-    private String email;
     private String fcmToken;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getFcmToken() {
         return fcmToken;

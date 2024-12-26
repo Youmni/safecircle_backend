@@ -1,10 +1,10 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 
 import org.safecircle.backend.enums.SafetyStatus;
-import org.safecircle.backend.models.Location;
+import org.safecircle.backend.dtos.LocationDTO;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 public class AlertDTO {
@@ -14,6 +14,8 @@ public class AlertDTO {
     private LocationDTO location;
     private long userId;
     private List<Long> circles;
+    private Boolean isActive;
+    private String duration;
 
     public AlertDTO() {
     }
@@ -25,12 +27,13 @@ public class AlertDTO {
         this.userId = userId;
     }
 
-    public AlertDTO(SafetyStatus status, String description, LocationDTO location, long userId, List<Long> circles) {
+    public AlertDTO(SafetyStatus status, String description, LocationDTO location, long userId, List<Long> circles, Boolean isActive, Duration duration) {
         this.status = status;
         this.description = description;
         this.location = location;
         this.userId = userId;
         this.circles = circles;
+        this.isActive = isActive;
     }
 
     public SafetyStatus getStatus() {
@@ -71,5 +74,21 @@ public class AlertDTO {
 
     public void setCircles(List<Long> circles) {
         this.circles = circles;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public Boolean setActive(Boolean active) {
+       return isActive = active;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 }
