@@ -1,8 +1,7 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.safecircle.backend.dto.BlacklistDTO;
-import org.safecircle.backend.models.Blacklist;
+import org.safecircle.backend.dtos.BlacklistDTO;
 import org.safecircle.backend.services.BlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;

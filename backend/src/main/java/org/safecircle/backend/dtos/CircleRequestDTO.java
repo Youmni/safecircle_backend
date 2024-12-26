@@ -1,6 +1,4 @@
-package org.safecircle.backend.dto;
-
-import org.safecircle.backend.enums.CircleType;
+package org.safecircle.backend.dtos;
 
 import java.time.LocalDateTime;
 

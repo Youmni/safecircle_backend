@@ -1,6 +1,6 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.BlacklistDTO;
+import org.safecircle.backend.dtos.BlacklistDTO;
 import org.safecircle.backend.models.Blacklist;
 import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.BlacklistRepository;

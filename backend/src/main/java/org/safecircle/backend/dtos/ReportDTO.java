@@ -1,8 +1,6 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 import org.safecircle.backend.enums.ReportStatus;
-import org.safecircle.backend.models.Report;
-import org.safecircle.backend.models.User;
 
 public class ReportDTO {
     private String subject;

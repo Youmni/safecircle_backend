@@ -1,6 +1,6 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.ReportDTO;
+import org.safecircle.backend.dtos.ReportDTO;
 import org.safecircle.backend.enums.ReportStatus;
 import org.safecircle.backend.models.Report;
 import org.safecircle.backend.models.User;

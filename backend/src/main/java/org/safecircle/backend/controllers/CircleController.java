@@ -1,14 +1,11 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.checkerframework.checker.units.qual.C;
-import org.safecircle.backend.dto.CircleDTO;
-import org.safecircle.backend.dto.CircleRequestDTO;
-import org.safecircle.backend.dto.UserDTO;
-import org.safecircle.backend.dto.UserRequestDTO;
+import org.safecircle.backend.dtos.CircleDTO;
+import org.safecircle.backend.dtos.CircleRequestDTO;
+import org.safecircle.backend.dtos.UserRequestDTO;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.models.Circle;
-import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.CircleRepository;
 import org.safecircle.backend.services.CircleService;
 import org.springframework.http.HttpStatus;

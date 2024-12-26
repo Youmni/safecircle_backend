@@ -1,7 +1,7 @@
 package org.safecircle.backend.controllers;
 
-import org.safecircle.backend.dto.AlertDTO;
-import org.safecircle.backend.dto.RequestAlertDTO;
+import org.safecircle.backend.dtos.AlertDTO;
+import org.safecircle.backend.dtos.RequestAlertDTO;
 import org.safecircle.backend.services.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

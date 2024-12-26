@@ -1,6 +1,4 @@
-package org.safecircle.backend.dto;
-
-import org.safecircle.backend.models.User;
+package org.safecircle.backend.dtos;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

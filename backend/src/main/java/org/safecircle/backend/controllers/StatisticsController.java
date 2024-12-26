@@ -1,6 +1,6 @@
 package org.safecircle.backend.controllers;
 
-import org.safecircle.backend.dto.StatisticsDTO;
+import org.safecircle.backend.dtos.StatisticsDTO;
 import org.safecircle.backend.repositories.AlertRepository;
 import org.safecircle.backend.repositories.EventRepository;
 import org.safecircle.backend.repositories.ReportRepository;

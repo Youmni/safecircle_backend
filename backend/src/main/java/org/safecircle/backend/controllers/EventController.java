@@ -1,15 +1,13 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.safecircle.backend.dto.EventDTO;
+import org.safecircle.backend.dtos.EventDTO;
 import org.safecircle.backend.enums.EventStatus;
 import org.safecircle.backend.models.Event;
-import org.safecircle.backend.models.User;
 import org.safecircle.backend.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.safecircle.backend.dto.UserDTO;
 
 import java.util.List;
 

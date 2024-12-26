@@ -1,10 +1,8 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 import java.time.LocalDate;
 
-import java.time.LocalDate;
-
-    public class UserRequestDTO {
+public class UserRequestDTO {
 
         private long userId;
         private String firstName;

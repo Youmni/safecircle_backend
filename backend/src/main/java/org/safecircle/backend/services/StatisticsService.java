@@ -1,6 +1,6 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.StatisticsDTO;
+import org.safecircle.backend.dtos.StatisticsDTO;
 import org.safecircle.backend.models.Alert;
 import org.safecircle.backend.models.Report;
 import org.safecircle.backend.repositories.*;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

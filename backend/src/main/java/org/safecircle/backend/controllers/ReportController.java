@@ -1,9 +1,8 @@
 package org.safecircle.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.safecircle.backend.dto.ReportDTO;
+import org.safecircle.backend.dtos.ReportDTO;
 import org.safecircle.backend.enums.ReportStatus;
-import org.safecircle.backend.models.Report;
 import org.safecircle.backend.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

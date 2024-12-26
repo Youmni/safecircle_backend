@@ -1,4 +1,4 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 import org.safecircle.backend.enums.EventStatus;
 

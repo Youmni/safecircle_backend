@@ -1,10 +1,9 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 
 import org.safecircle.backend.enums.SafetyStatus;
-import org.safecircle.backend.models.Location;
-import org.safecircle.backend.dto.LocationDTO;
-import java.math.BigDecimal;
+import org.safecircle.backend.dtos.LocationDTO;
+
 import java.time.Duration;
 import java.util.List;
 

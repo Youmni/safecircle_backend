@@ -1,7 +1,6 @@
 package org.safecircle.backend.controllers;
 
-import org.safecircle.backend.dto.InvitationDTO;
-import org.safecircle.backend.models.Invitation;
+import org.safecircle.backend.dtos.InvitationDTO;
 import org.safecircle.backend.services.InvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

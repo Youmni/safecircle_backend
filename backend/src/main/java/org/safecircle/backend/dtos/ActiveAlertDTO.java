@@ -1,10 +1,7 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
-import org.safecircle.backend.enums.EventStatus;
 import org.safecircle.backend.enums.SafetyStatus;
 
-import java.security.PrivateKey;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ActiveAlertDTO {

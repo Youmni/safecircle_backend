@@ -1,13 +1,9 @@
-package org.safecircle.backend.dto;
+package org.safecircle.backend.dtos;
 
 import org.safecircle.backend.enums.UserType;
-import org.safecircle.backend.models.Blacklist;
-import org.safecircle.backend.models.Circle;
-import org.safecircle.backend.models.CircleUser;
 import org.safecircle.backend.models.CircleUserKey;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 public class UserDTO {

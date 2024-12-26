@@ -1,30 +1,22 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.CircleDTO;
-import org.safecircle.backend.dto.EventDTO;
-import org.safecircle.backend.dto.LocationDTO;
+import org.safecircle.backend.dtos.CircleDTO;
+import org.safecircle.backend.dtos.EventDTO;
+import org.safecircle.backend.dtos.LocationDTO;
 import org.safecircle.backend.enums.CircleType;
 import org.safecircle.backend.enums.EventStatus;
 import org.safecircle.backend.models.Circle;
 import org.safecircle.backend.models.Event;
 import org.safecircle.backend.models.Location;
-import org.safecircle.backend.models.User;
 import org.safecircle.backend.repositories.CircleRepository;
 import org.safecircle.backend.repositories.EventRepository;
 import org.safecircle.backend.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.safecircle.backend.dto.UserDTO;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @Service

@@ -1,6 +1,6 @@
 package org.safecircle.backend.services;
 
-import org.safecircle.backend.dto.InvitationDTO;
+import org.safecircle.backend.dtos.InvitationDTO;
 import org.safecircle.backend.enums.InvitationStatus;
 import org.safecircle.backend.models.Circle;
 import org.safecircle.backend.models.Invitation;

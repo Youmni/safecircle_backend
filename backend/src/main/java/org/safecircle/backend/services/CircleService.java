@@ -1,13 +1,9 @@
 package org.safecircle.backend.services;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import org.safecircle.backend.dto.CircleDTO;
-import org.safecircle.backend.dto.CircleRequestDTO;
-import org.safecircle.backend.dto.UserDTO;
-import org.safecircle.backend.dto.UserRequestDTO;
+import org.safecircle.backend.dtos.CircleDTO;
+import org.safecircle.backend.dtos.CircleRequestDTO;
+import org.safecircle.backend.dtos.UserRequestDTO;
 import org.safecircle.backend.enums.CircleType;
-import org.safecircle.backend.enums.UserType;
 import org.safecircle.backend.models.*;
 import org.safecircle.backend.repositories.CircleAlertRepository;
 import org.safecircle.backend.repositories.CircleRepository;
