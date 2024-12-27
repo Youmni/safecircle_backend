@@ -344,4 +344,63 @@ public class AlertService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public List<RequestAlertDTO> getAllAlertsByCircleId(long userId, long circleId) {
+        User user = userService.getUserById(userId);
+        Circle circle = circleService.getCircleById(circleId);
+        List<CircleUser> circleUsers = circleUserRepository.findByUser(user);
+        List<CircleAlert> circleAlerts = circleAlertRepository.findByCircle(circle);
+
+        for (CircleUser circleUser : circleUsers) {
+            if (circleService.isUserInCircle(circleId, circleUser.getUser().getUserId())) {
+                List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
+                for (CircleAlert circleAlert : circleAlerts) {
+                    circleAlertDTO.add(new RequestAlertDTO(
+                            new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                            circleAlert.getAlert().getUser().getFirstName(),
+                            circleAlert.getAlert().getUser().getLastName(),
+                            circleAlert.getAlert().getStatus(),
+                            circleAlert.getAlert().getDescription()
+                    ));
+                }
+                return circleAlertDTO;
+            }
+        }
+        return null;
+    }
+
+    public List<RequestAlertDTO> getAllAlertsByUserid(long userId) {
+        User user = userService.getUserById(userId);
+        List<Alert> alerts = alertRepository.findByUser(user);
+        List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
+        for (Alert alert : alerts) {
+            if (alert.getStatus().equals(SafetyStatus.UNSAFE)) {
+                Set<CircleAlert> circleAlerts = alert.getCircleAlerts();
+                for (CircleAlert circleAlert : circleAlerts) {
+                    if (circleService.isUserInCircle(circleAlert.getCircle().getCircleId(), alert.getUser().getUserId())) {
+                        circleAlertDTO.add(new RequestAlertDTO(
+                                new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                                circleAlert.getAlert().getUser().getFirstName(),
+                                circleAlert.getAlert().getUser().getLastName(),
+                                circleAlert.getAlert().getStatus(),
+                                circleAlert.getAlert().getDescription()
+                        ));
+                    }
+                }
+            }
+
+            if (alert.getStatus().equals(SafetyStatus.SOS)) {
+                circleAlertDTO.add(new RequestAlertDTO(
+                        new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                        alert.getUser().getFirstName(),
+                        alert.getUser().getLastName(),
+                        alert.getStatus(),
+                        alert.getDescription()
+                ));
+            }
+
+        }
+        return circleAlertDTO;
+    }
+
 }

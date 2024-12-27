@@ -37,4 +37,15 @@ public class AlertController {
         return alertService.getLatestAlert();
     }
 
+    @CrossOrigin
+    @GetMapping("/{userid}/{circleid}/getAllCircleAlerts")
+    public List<RequestAlertDTO> getAllAlertsByCircleId(@PathVariable long userid, @PathVariable long circleid) {
+        return alertService.getAllAlertsByCircleId(userid, circleid);
+    }
+
+    @CrossOrigin
+    @GetMapping("/{id}/getAllUserAlerts")
+    public List<RequestAlertDTO> getAllUserAlerts(@PathVariable long id) {
+        return alertService.getAllAlertsByUserid(id);
+    }
 }
