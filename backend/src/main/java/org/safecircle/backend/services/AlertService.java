@@ -340,7 +340,8 @@ public class AlertService {
                     alert.getUser().getFirstName(),
                     alert.getUser().getLastName(),
                     alert.getStatus(),
-                    alert.getDescription()
+                    alert.getDescription(),
+                        alert.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
     }
@@ -360,7 +361,8 @@ public class AlertService {
                             circleAlert.getAlert().getUser().getFirstName(),
                             circleAlert.getAlert().getUser().getLastName(),
                             circleAlert.getAlert().getStatus(),
-                            circleAlert.getAlert().getDescription()
+                            circleAlert.getAlert().getDescription(),
+                            circleAlert.getAlert().getCreatedAt()
                     ));
                 }
                 return circleAlertDTO;
@@ -383,7 +385,8 @@ public class AlertService {
                                 circleAlert.getAlert().getUser().getFirstName(),
                                 circleAlert.getAlert().getUser().getLastName(),
                                 circleAlert.getAlert().getStatus(),
-                                circleAlert.getAlert().getDescription()
+                                circleAlert.getAlert().getDescription(),
+                                circleAlert.getAlert().getCreatedAt()
                         ));
                     }
                 }
@@ -395,7 +398,8 @@ public class AlertService {
                         alert.getUser().getFirstName(),
                         alert.getUser().getLastName(),
                         alert.getStatus(),
-                        alert.getDescription()
+                        alert.getDescription(),
+                        alert.getCreatedAt()
                 ));
             }
 

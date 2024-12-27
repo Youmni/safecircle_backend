@@ -2,6 +2,8 @@ package org.safecircle.backend.dtos;
 
 import org.safecircle.backend.enums.SafetyStatus;
 
+import java.time.LocalDateTime;
+
 public class RequestAlertDTO {
 
     private LocationDTO location;
@@ -9,13 +11,15 @@ public class RequestAlertDTO {
     private String lastName;
     private SafetyStatus status;
     private String description;
+    private LocalDateTime createdAt;
 
-    public RequestAlertDTO(LocationDTO location, String firstName, String lastName, SafetyStatus status, String description) {
+    public RequestAlertDTO(LocationDTO location, String firstName, String lastName, SafetyStatus status, String description, LocalDateTime createdAt) {
         this.location = location;
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
         this.description = description;
+        this.createdAt = createdAt;
     }
 
     public LocationDTO getLocation() {
@@ -56,5 +60,13 @@ public class RequestAlertDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
