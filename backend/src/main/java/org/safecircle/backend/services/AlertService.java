@@ -69,7 +69,7 @@ public class AlertService {
         this.circleAlertRepository = circleAlertRepository;
     }
 
-    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId, String firstname, String lastname) {
+    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
@@ -95,7 +95,7 @@ public class AlertService {
     }
 
     public ResponseEntity<String> sendAlert(long userId, AlertDTO alert) {
-        if(!userService.isUserValid(alert.getUserId())){
+        if(!userService.isUserValid(userId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(UserService.USER_NOT_FOUND);
         }
 
@@ -107,9 +107,9 @@ public class AlertService {
     }
 
     public ResponseEntity<String> sendUnsafeAlert(long userid, AlertDTO alert) {
-        User user = userService.getUserById(alert.getUserId());
+        User user = userService.getUserById(userid);
 
-        if (!circleService.isUserInCircles(alert.getUserId(), alert.getCircles())) {
+        if (!circleService.isUserInCircles(userid, alert.getCircles())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not in circles he requested to send to");
         }
 
@@ -158,7 +158,6 @@ public class AlertService {
                         alert.getDescription(),
                         locationToSend.getLatitude(),
                         locationToSend.getLongitude(),
-                        alert.getUserId(),
                         user.getFirstName(),
                         user.getLastName()
                 );
@@ -226,7 +225,7 @@ public class AlertService {
     }
 
         public ResponseEntity<String> sendSOSAlert(long userId, AlertDTO alert) {
-        User user = userService.getUserById(alert.getUserId());
+        User user = userService.getUserById(userId);
         List<User> users = userRepository.findAllByLocationIsNotNull();
 
         Location alertLocation = new Location(alert.getLocation().latitude(), alert.getLocation().longitude());
@@ -266,7 +265,6 @@ public class AlertService {
                             alert.getDescription(),
                             locationToSend.getLatitude(),
                             locationToSend.getLongitude(),
-                            userId,
                             user.getFirstName(),
                             user.getLastName()
                     );
