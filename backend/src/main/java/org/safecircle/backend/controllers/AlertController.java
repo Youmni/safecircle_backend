@@ -38,6 +38,13 @@ public class AlertController {
     }
 
     @CrossOrigin
+    @GetMapping("/latest/sos")
+    public List<RequestAlertDTO> getLatestSOS() {
+        return alertService.getLatestSOS();
+    }
+
+
+    @CrossOrigin
     @GetMapping("/{userid}/{circleid}/getAllCircleAlerts")
     public List<RequestAlertDTO> getAllAlertsByCircleId(@PathVariable long userid, @PathVariable long circleid) {
         return alertService.getAllAlertsByCircleId(userid, circleid);

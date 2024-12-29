@@ -398,6 +398,20 @@ public class AlertService {
                 .collect(Collectors.toList());
     }
 
+    public List<RequestAlertDTO> getLatestSOS() {
+        return alertRepository.findByCreatedAtAfterAndStatus(LocalDateTime.now().minusDays(1), SafetyStatus.SOS).stream()
+                .map(alert -> new RequestAlertDTO(
+                        new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                        alert.getUser().getFirstName(),
+                        alert.getUser().getLastName(),
+                        alert.getStatus(),
+                        alert.getDescription(),
+                        alert.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
     public List<RequestAlertDTO> getAllAlertsByCircleId(long userId, long circleId) {
         User user = userService.getUserById(userId);
         Circle circle = circleService.getCircleById(circleId);
