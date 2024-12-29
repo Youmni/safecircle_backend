@@ -266,7 +266,7 @@ public class AlertService {
 
                 try {
                     Duration duration = Duration.parse(durationString);
-                    if (alert.getCreatedAt().plus(duration).isAfter(LocalDateTime.now())) {
+                    if (alert.getCreatedAt().plus(duration).isBefore(LocalDateTime.now())) {
                         stopAlert(alert.getUser().getUserId());
                         System.out.println("Alert stopped for user ID: " + alert.getUser().getUserId());
                     }
