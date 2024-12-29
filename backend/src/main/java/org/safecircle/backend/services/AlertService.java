@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import org.safecircle.backend.dtos.*;
 import org.safecircle.backend.dtos.ActiveAlertDTO;
 import org.safecircle.backend.dtos.FcmTokenDTO;
@@ -69,7 +70,32 @@ public class AlertService {
         this.circleAlertRepository = circleAlertRepository;
     }
 
-    public void sendNotification(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname) {
+    public void sendNotificationUnSafe(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname, String duration) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Create JSON payload
+        String payload = String.format(
+                "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"data\":{\"latitude\":\"%s\",\"longitude\":\"%s\"}}",
+                token, alertType, description, latitude, longitude
+        );
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        // Create HTTP request
+        HttpEntity<String> request = new HttpEntity<>(payload, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(EXPO_PUSH_URL, request, String.class);
+            System.out.println("Notification sent to token: " + token + ". Response: " + response.getBody());
+        } catch (Exception e) {
+            System.err.println("Failed to send notification to token: " + token);
+            e.printStackTrace();
+        }
+    }
+
+    public void sendNotificationSOS(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
@@ -152,14 +178,15 @@ public class AlertService {
                     locationToSend = user.getLocation();
                 }
 
-                sendNotification(
+                sendNotificationUnSafe(
                         token.getFcmToken(),
                         "Unsafe Alert: " + user.getFirstName() + " " + user.getLastName(),
                         alert.getDescription(),
                         locationToSend.getLatitude(),
                         locationToSend.getLongitude(),
                         user.getFirstName(),
-                        user.getLastName()
+                        user.getLastName(),
+                        alert.getDuration()
                 );
                 notifiedUserIds.add(userInCircle.getUserId());
             }
@@ -224,6 +251,34 @@ public class AlertService {
         System.out.println("Checked for alerts older than 12 hours.");
     }
 
+    @Transactional
+    @Scheduled(fixedRate = 300000)
+    public void stopAlertsAfterDuration() {
+        List<Alert> activeAlerts = alertRepository.findByIsActive(true);
+
+        for (Alert alert : activeAlerts) {
+            if (alert.getStatus() == SafetyStatus.UNSAFE) {
+                String durationString = alert.getDurationOfAlert();
+                if (durationString == null || durationString.isEmpty()) {
+                    System.err.println("Skipping alert with null or empty duration: " + alert);
+                    continue;
+                }
+
+                try {
+                    Duration duration = Duration.parse(durationString);
+                    if (alert.getCreatedAt().plus(duration).isAfter(LocalDateTime.now())) {
+                        stopAlert(alert.getUser().getUserId());
+                        System.out.println("Alert stopped for user ID: " + alert.getUser().getUserId());
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error processing alert: " + alert);
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("Checked for alerts older than 12 hours.");
+    }
+
         public ResponseEntity<String> sendSOSAlert(long userId, AlertDTO alert) {
         User user = userService.getUserById(userId);
         List<User> users = userRepository.findAllByLocationIsNotNull();
@@ -259,7 +314,7 @@ public class AlertService {
                     locationToSend = user.getLocation();
                 }
 
-                    sendNotification(
+                    sendNotificationSOS(
                             token.getFcmToken(),
                             "SOS Alert: " + alert.getStatus(),
                             alert.getDescription(),
@@ -404,5 +459,7 @@ public class AlertService {
         }
         return circleAlertDTO;
     }
+
+
 
 }
