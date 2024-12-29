@@ -168,8 +168,7 @@ public class AlertService {
             }
             List<FcmToken> tokens = fcmTokenRepository.findByUser(userInCircle);
             if (!tokens.isEmpty()) {
-                FcmToken token = tokens.getFirst();
-
+                FcmToken token = tokens.get(0);
                 Location locationToSend;
                 if (alertSave.getFirstNotification()){
                     locationToSend = alertLocation;
@@ -251,7 +250,7 @@ public class AlertService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 300000)
     public void stopAlertsAfterDuration() {
         List<Alert> activeAlerts = alertRepository.findByIsActive(true);
 
