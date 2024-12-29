@@ -218,7 +218,6 @@ public class AlertService {
 
         alert.setisActive(false);
         alert.setUpdatedAt(LocalDateTime.now());
-
         if (alert.getUpdatedAt() != null) {
             Duration duration = Duration.between(activeAlert.getCreatedAt(), alert.getUpdatedAt());
             String formattedDuration = formatDuration(duration);
@@ -252,7 +251,7 @@ public class AlertService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 30000)
     public void stopAlertsAfterDuration() {
         List<Alert> activeAlerts = alertRepository.findByIsActive(true);
 
@@ -267,7 +266,8 @@ public class AlertService {
                 try {
                     Duration duration = Duration.parse(durationString);
                     if (alert.getCreatedAt().plus(duration).isBefore(LocalDateTime.now())) {
-                        stopAlert(alert.getUser().getUserId());
+                        alert.setActive(false);
+                        alertRepository.save(alert);
                         System.out.println("Alert stopped for user ID: " + alert.getUser().getUserId());
                     }
                 } catch (Exception e) {
