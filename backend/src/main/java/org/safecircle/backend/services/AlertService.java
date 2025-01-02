@@ -70,13 +70,13 @@ public class AlertService {
         this.circleAlertRepository = circleAlertRepository;
     }
 
-    public void sendNotificationUnSafe(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname, String duration) {
+    public void sendNotificationUnSafe(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
         String payload = String.format(
-                "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"data\":{\"latitude\":\"%s\",\"longitude\":\"%s\"}}",
-                token, alertType, description, latitude, longitude
+                "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"data\":{\"latitude\":\"%s\",\"longitude\":\"%s\",\"userId\":\"%s\"}}",
+                token, alertType, description, latitude, longitude, userId
         );
 
         // Set headers
@@ -95,13 +95,13 @@ public class AlertService {
         }
     }
 
-    public void sendNotificationSOS(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, String firstname, String lastname) {
+    public void sendNotificationSOS(String token, String alertType, String description, BigDecimal latitude, BigDecimal longitude, long userId) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create JSON payload
         String payload = String.format(
-                "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"data\":{\"latitude\":\"%s\",\"longitude\":\"%s\"}}",
-                token, alertType, description, latitude, longitude
+                "{\"to\":\"%s\",\"title\":\"%s\",\"body\":\"%s\",\"data\":{\"latitude\":\"%s\",\"longitude\":\"%s\",\"userId\":\"%s\"}}",
+                token, alertType, description, latitude, longitude, userId
         );
 
         // Set headers
@@ -183,9 +183,7 @@ public class AlertService {
                         alert.getDescription(),
                         locationToSend.getLatitude(),
                         locationToSend.getLongitude(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        alert.getDuration()
+                        user.getUserId()
                 );
                 notifiedUserIds.add(userInCircle.getUserId());
             }
@@ -319,8 +317,7 @@ public class AlertService {
                             alert.getDescription(),
                             locationToSend.getLatitude(),
                             locationToSend.getLongitude(),
-                            user.getFirstName(),
-                            user.getLastName()
+                            user.getUserId()
                     );
                     notifiedUserIds.add(userInArea.getUserId());
 
@@ -496,6 +493,40 @@ public class AlertService {
         return circleAlertDTO;
     }
 
+    public List<RequestAlertDTO> getAllActiveAlertsByUserid(long userId) {
+        User user = userService.getUserById(userId);
+        List<Alert> alerts = alertRepository.findByUser(user);
+        List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
+        for (Alert alert : alerts) {
+            if (alert.getStatus().equals(SafetyStatus.UNSAFE) && alert.getActive()) {
+                Set<CircleAlert> circleAlerts = alert.getCircleAlerts();
+                for (CircleAlert circleAlert : circleAlerts) {
+                    if (circleService.isUserInCircle(circleAlert.getCircle().getCircleId(), alert.getUser().getUserId())) {
+                        circleAlertDTO.add(new RequestAlertDTO(
+                                new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                                circleAlert.getAlert().getUser().getFirstName(),
+                                circleAlert.getAlert().getUser().getLastName(),
+                                circleAlert.getAlert().getStatus(),
+                                circleAlert.getAlert().getDescription(),
+                                circleAlert.getAlert().getCreatedAt()
+                        ));
+                    }
+                }
+            }
 
+            if (alert.getStatus().equals(SafetyStatus.SOS) && alert.getActive()) {
+                circleAlertDTO.add(new RequestAlertDTO(
+                        new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                        alert.getUser().getFirstName(),
+                        alert.getUser().getLastName(),
+                        alert.getStatus(),
+                        alert.getDescription(),
+                        alert.getCreatedAt()
+                ));
+            }
+
+        }
+        return circleAlertDTO;
+    }
 
 }

@@ -62,4 +62,10 @@ public class AlertController {
     public List<RequestAlertDTO> getAllUserAlerts(@PathVariable long id) {
         return alertService.getAllAlertsByUserid(id);
     }
+
+    @CrossOrigin
+    @GetMapping("/{id}/getAllActiveUserAlerts")
+    public List<RequestAlertDTO> getAllActiveUserAlerts(@PathVariable long id) {
+        return alertService.getAllActiveAlertsByUserid(id);
+    }
 }
