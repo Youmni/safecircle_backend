@@ -412,7 +412,7 @@ public class AlertService {
     }
 
 
-    public List<RequestAlertDTO> getAllAlertsByCircleId(long userId, long circleId) {
+    public List<RequestAlertDTO> getAllAlertsByCircleIdAndUserId(long userId, long circleId) {
         User user = userService.getUserById(userId);
         Circle circle = circleService.getCircleById(circleId);
         List<CircleUser> circleUsers = circleUserRepository.findByUser(user);
@@ -422,20 +422,43 @@ public class AlertService {
             if (circleService.isUserInCircle(circleId, circleUser.getUser().getUserId())) {
                 List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
                 for (CircleAlert circleAlert : circleAlerts) {
-                    circleAlertDTO.add(new RequestAlertDTO(
-                            new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
-                            circleAlert.getAlert().getUser().getFirstName(),
-                            circleAlert.getAlert().getUser().getLastName(),
-                            circleAlert.getAlert().getStatus(),
-                            circleAlert.getAlert().getDescription(),
-                            circleAlert.getAlert().getCreatedAt()
-                    ));
+                    if(circleAlert.getAlert().getActive() && circleAlert.getAlert().getUser().getUserId()==userId) {
+                        circleAlertDTO.add(new RequestAlertDTO(
+                                new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                                circleAlert.getAlert().getUser().getFirstName(),
+                                circleAlert.getAlert().getUser().getLastName(),
+                                circleAlert.getAlert().getStatus(),
+                                circleAlert.getAlert().getDescription(),
+                                circleAlert.getAlert().getCreatedAt()
+                        ));
+                    }
                 }
                 return circleAlertDTO;
             }
         }
-        return null;
+        return new ArrayList<>();
     }
+
+    public List<RequestAlertDTO> getAllAlertsByCircleId(long circleId) {
+        Circle circle = circleService.getCircleById(circleId);
+        List<CircleAlert> circleAlerts = circleAlertRepository.findByCircle(circle);
+
+        List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
+        for (CircleAlert circleAlert : circleAlerts) {
+            if (circleAlert.getAlert().getActive()) {
+                circleAlertDTO.add(new RequestAlertDTO(
+                        new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                        circleAlert.getAlert().getUser().getFirstName(),
+                        circleAlert.getAlert().getUser().getLastName(),
+                        circleAlert.getAlert().getStatus(),
+                        circleAlert.getAlert().getDescription(),
+                        circleAlert.getAlert().getCreatedAt()
+                ));
+            }
+        }
+        return circleAlertDTO;
+    }
+
 
     public List<RequestAlertDTO> getAllAlertsByUserid(long userId) {
         User user = userService.getUserById(userId);
