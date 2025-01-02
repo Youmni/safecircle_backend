@@ -262,6 +262,10 @@ public class UserService {
                 user,
                 fcmTokenDTO.getFcmToken()
         );
+
+        if (user.getFcmTokens().contains(fcmToken)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("FCM Token is already registered");
+        }
         fcmTokenRepository.save(fcmToken);
 
         return ResponseEntity.ok("FCM Tokens registered successfully!");

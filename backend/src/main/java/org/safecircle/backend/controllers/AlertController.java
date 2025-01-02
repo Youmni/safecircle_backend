@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/alert")
 public class AlertController {
+
     private AlertService alertService;
 
     @Autowired
@@ -37,4 +38,34 @@ public class AlertController {
         return alertService.getLatestAlert();
     }
 
+    @CrossOrigin
+    @GetMapping("/latest/sos")
+    public List<RequestAlertDTO> getLatestSOS() {
+        return alertService.getLatestSOS();
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/{userid}/{circleId}/getAllCircleAlerts")
+    public List<RequestAlertDTO> getAllAlertsByCircleIdAndUserId(@PathVariable long userid, @PathVariable long circleId) {
+        return alertService.getAllAlertsByCircleIdAndUserId(userid, circleId);
+    }
+
+    @CrossOrigin
+    @GetMapping("/{circleId}/getAllCircleAlerts")
+    public List<RequestAlertDTO> getAllAlertsByCircleId(@PathVariable long circleId) {
+        return alertService.getAllAlertsByCircleId(circleId);
+    }
+
+    @CrossOrigin
+    @GetMapping("/{id}/getAllUserAlerts")
+    public List<RequestAlertDTO> getAllUserAlerts(@PathVariable long id) {
+        return alertService.getAllAlertsByUserid(id);
+    }
+
+    @CrossOrigin
+    @GetMapping("/{id}/getAllActiveUserAlerts")
+    public List<RequestAlertDTO> getAllActiveUserAlerts(@PathVariable long id) {
+        return alertService.getAllActiveAlertsByUserid(id);
+    }
 }

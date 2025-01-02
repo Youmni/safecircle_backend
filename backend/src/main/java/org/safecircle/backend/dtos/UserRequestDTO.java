@@ -32,7 +32,10 @@ public class UserRequestDTO {
             this.dateOfBirth = dateOfBirth;
         }
 
-        public String getFirstName() {
+    public UserRequestDTO() {
+    }
+
+    public String getFirstName() {
             return firstName;
         }
 
