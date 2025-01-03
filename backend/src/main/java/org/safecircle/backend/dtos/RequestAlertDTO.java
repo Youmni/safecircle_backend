@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class RequestAlertDTO {
 
+    private long userId;
     private LocationDTO location;
     private LocationDTO userLocation;
     private String firstName;
@@ -28,6 +29,17 @@ public class RequestAlertDTO {
         this.userLocation = userLocation;
         this.lastName = lastName;
         this.firstName = firstName;
+        this.status = status;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
+
+    public RequestAlertDTO(long userId, LocationDTO location, LocationDTO userLocation, String firstName, String lastName, SafetyStatus status, String description, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.location = location;
+        this.userLocation = userLocation;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.status = status;
         this.description = description;
         this.createdAt = createdAt;
@@ -87,5 +99,13 @@ public class RequestAlertDTO {
 
     public void setUserLocation(LocationDTO userLocation) {
         this.userLocation = userLocation;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

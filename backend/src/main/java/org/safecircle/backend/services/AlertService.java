@@ -420,6 +420,7 @@ public class AlertService {
                 for (CircleAlert circleAlert : circleAlerts) {
                     if(circleAlert.getAlert().getActive()) {
                         circleAlertDTO.add(new RequestAlertDTO(
+                                circleAlert.getAlert().getUser().getUserId(),
                                 new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
                                 new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude()),
                                 circleAlert.getAlert().getUser().getFirstName(),
