@@ -400,17 +400,33 @@ public class AlertService {
         List<CircleUser> circleUsers = circleUserRepository.findByUser(user);
         List<RequestAlertDTO> requestAlertDTOs = new ArrayList<>();
 
-        List<Alert> sosAlerts = alertRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1));
-
-        for (Alert sosAlert : sosAlerts) {
-            if (sosAlert.getStatus().equals(SafetyStatus.UNSAFE) && sosAlert.getActive()) {
+        List<Alert> sosAlertsActive = alertRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1));
+        for (Alert sosAlert : sosAlertsActive) {
+            if (sosAlert.getStatus().equals(SafetyStatus.SOS) && sosAlert.getActive()) {
                 RequestAlertDTO dto = new RequestAlertDTO(
-                        new LocationDTO(sosAlert.getLocation().getLatitude(), sosAlert.getLocation().getLongitude()),
-                        sosAlert.getUser().getFirstName(),
-                        sosAlert.getUser().getLastName(),
-                        sosAlert.getStatus(),
+                        sosAlert.getUser().getUserId(),
+                        sosAlert.getActive(),
+                        sosAlert.getCreatedAt(),
                         sosAlert.getDescription(),
-                        sosAlert.getCreatedAt()
+                        sosAlert.getStatus(), sosAlert.getUser().getLastName(), sosAlert.getUser().getFirstName(),
+                        new LocationDTO(sosAlert.getLocation().getLatitude(), sosAlert.getLocation().getLongitude()),
+                        new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude())
+                );
+                requestAlertDTOs.add(dto);
+            }
+        }
+
+        List<Alert> sosAlertsNotActive = alertRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1));
+        for (Alert sosAlert : sosAlertsNotActive) {
+            if (sosAlert.getStatus().equals(SafetyStatus.SOS) && sosAlert.getActive().equals(false)) {
+                RequestAlertDTO dto = new RequestAlertDTO(
+                        sosAlert.getUser().getUserId(),
+                        sosAlert.getActive(),
+                        sosAlert.getCreatedAt(),
+                        sosAlert.getDescription(),
+                        sosAlert.getStatus(), sosAlert.getUser().getLastName(), sosAlert.getUser().getFirstName(),
+                        new LocationDTO(sosAlert.getLocation().getLatitude(), sosAlert.getLocation().getLongitude()),
+                        new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude())
                 );
                 requestAlertDTOs.add(dto);
             }
@@ -424,12 +440,13 @@ public class AlertService {
 
                 if (alert.getStatus().equals(SafetyStatus.UNSAFE) && alert.getActive()) {
                     RequestAlertDTO dto = new RequestAlertDTO(
-                            new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
-                            alert.getUser().getFirstName(),
-                            alert.getUser().getLastName(),
-                            alert.getStatus(),
+                            alert.getUser().getUserId(),
+                            alert.getActive(),
+                            alert.getCreatedAt(),
                             alert.getDescription(),
-                            alert.getCreatedAt()
+                            alert.getStatus(), alert.getUser().getLastName(), alert.getUser().getFirstName(),
+                            new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                            new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude())
                     );
                     requestAlertDTOs.add(dto);
                 }
@@ -466,13 +483,12 @@ public class AlertService {
                     if(circleAlert.getAlert().getActive()) {
                         circleAlertDTO.add(new RequestAlertDTO(
                                 circleAlert.getAlert().getUser().getUserId(),
-                                new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
-                                new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude()),
-                                circleAlert.getAlert().getUser().getFirstName(),
-                                circleAlert.getAlert().getUser().getLastName(),
-                                circleAlert.getAlert().getStatus(),
+                                circleAlert.getAlert().getActive(),
+                                circleAlert.getAlert().getCreatedAt(),
                                 circleAlert.getAlert().getDescription(),
-                                circleAlert.getAlert().getCreatedAt()
+                                circleAlert.getAlert().getStatus(), circleAlert.getAlert().getUser().getLastName(), circleAlert.getAlert().getUser().getFirstName(),
+                                new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
+                                new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude())
                         ));
                     }
                 }

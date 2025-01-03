@@ -14,6 +14,7 @@ public class RequestAlertDTO {
     private SafetyStatus status;
     private String description;
     private LocalDateTime createdAt;
+    private boolean active;
 
     public RequestAlertDTO(LocationDTO location, String firstName, String lastName, SafetyStatus status, String description, LocalDateTime createdAt) {
         this.location = location;
@@ -34,14 +35,15 @@ public class RequestAlertDTO {
         this.createdAt = createdAt;
     }
 
-    public RequestAlertDTO(long userId, LocationDTO location, LocationDTO userLocation, String firstName, String lastName, SafetyStatus status, String description, LocalDateTime createdAt) {
+    public RequestAlertDTO(long userId, boolean active, LocalDateTime createdAt, String description, SafetyStatus status, String lastName, String firstName, LocationDTO userLocation, LocationDTO location) {
         this.userId = userId;
+        this.active = active;
         this.location = location;
         this.userLocation = userLocation;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.status = status;
         this.description = description;
+        this.status = status;
+        this.lastName = lastName;
+        this.firstName = firstName;
         this.createdAt = createdAt;
     }
 
@@ -107,5 +109,13 @@ public class RequestAlertDTO {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
