@@ -45,7 +45,7 @@ public class AlertController {
     }
 
     @CrossOrigin
-    @GetMapping("/alerts/{userid}")
+    @GetMapping("/{userid}")
     public List<RequestAlertDTO> getAlertsForUser(@PathVariable long userid) {
         return alertService.getSOSAndUnsafe(userid);
     }
