@@ -418,7 +418,7 @@ public class AlertService {
             if (circleService.isUserInCircle(circleId, circleUser.getUser().getUserId())) {
                 List<RequestAlertDTO> circleAlertDTO = new ArrayList<>();
                 for (CircleAlert circleAlert : circleAlerts) {
-                    if(circleAlert.getAlert().getActive() && circleAlert.getAlert().getUser().getUserId()==userId) {
+                    if(circleAlert.getAlert().getActive()) {
                         circleAlertDTO.add(new RequestAlertDTO(
                                 new LocationDTO(circleAlert.getAlert().getLocation().getLatitude(), circleAlert.getAlert().getLocation().getLongitude()),
                                 new LocationDTO(user.getLocation().getLatitude(), user.getLocation().getLongitude()),
