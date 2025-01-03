@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class RequestAlertDTO {
 
     private LocationDTO location;
-    private LocationDTO alertLocation;
+    private LocationDTO userLocation;
     private String firstName;
     private String lastName;
     private SafetyStatus status;
@@ -23,11 +23,11 @@ public class RequestAlertDTO {
         this.createdAt = createdAt;
     }
 
-    public RequestAlertDTO(LocationDTO location, LocationDTO alertLocation, String firstName, String lastName, SafetyStatus status, String description, LocalDateTime createdAt) {
+    public RequestAlertDTO(LocationDTO location, LocationDTO userLocation, String lastName, String firstName, SafetyStatus status, String description, LocalDateTime createdAt) {
         this.location = location;
-        this.alertLocation = alertLocation;
-        this.firstName = firstName;
+        this.userLocation = userLocation;
         this.lastName = lastName;
+        this.firstName = firstName;
         this.status = status;
         this.description = description;
         this.createdAt = createdAt;
@@ -81,11 +81,11 @@ public class RequestAlertDTO {
         this.createdAt = createdAt;
     }
 
-    public LocationDTO getAlertLocation() {
-        return alertLocation;
+    public LocationDTO getUserLocation() {
+        return userLocation;
     }
 
-    public void setAlertLocation(LocationDTO alertLocation) {
-        this.alertLocation = alertLocation;
+    public void setUserLocation(LocationDTO userLocation) {
+        this.userLocation = userLocation;
     }
 }
