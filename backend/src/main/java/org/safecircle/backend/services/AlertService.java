@@ -395,6 +395,51 @@ public class AlertService {
                 .collect(Collectors.toList());
     }
 
+    public List<RequestAlertDTO> getSOSAndUnsafe(long userId) {
+        User user = userService.getUserById(userId);
+        List<CircleUser> circleUsers = circleUserRepository.findByUser(user);
+        List<RequestAlertDTO> requestAlertDTOs = new ArrayList<>();
+
+        List<Alert> sosAlerts = alertRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1));
+
+        for (Alert sosAlert : sosAlerts) {
+            if (sosAlert.getStatus().equals(SafetyStatus.UNSAFE) && sosAlert.getActive()) {
+                RequestAlertDTO dto = new RequestAlertDTO(
+                        new LocationDTO(sosAlert.getLocation().getLatitude(), sosAlert.getLocation().getLongitude()),
+                        sosAlert.getUser().getFirstName(),
+                        sosAlert.getUser().getLastName(),
+                        sosAlert.getStatus(),
+                        sosAlert.getDescription(),
+                        sosAlert.getCreatedAt()
+                );
+                requestAlertDTOs.add(dto);
+            }
+        }
+
+        for (CircleUser circleUser : circleUsers) {
+            List<CircleAlert> circleAlerts = circleAlertRepository.findByCircle(circleUser.getCircle());
+
+            for (CircleAlert circleAlert : circleAlerts) {
+                Alert alert = circleAlert.getAlert();
+
+                if (alert.getStatus().equals(SafetyStatus.UNSAFE) && alert.getActive()) {
+                    RequestAlertDTO dto = new RequestAlertDTO(
+                            new LocationDTO(alert.getLocation().getLatitude(), alert.getLocation().getLongitude()),
+                            alert.getUser().getFirstName(),
+                            alert.getUser().getLastName(),
+                            alert.getStatus(),
+                            alert.getDescription(),
+                            alert.getCreatedAt()
+                    );
+                    requestAlertDTOs.add(dto);
+                }
+            }
+        }
+
+        return requestAlertDTOs;
+    }
+
+
     public List<RequestAlertDTO> getLatestSOS() {
         return alertRepository.findByCreatedAtAfterAndStatus(LocalDateTime.now().minusDays(1), SafetyStatus.SOS).stream()
                 .map(alert -> new RequestAlertDTO(
