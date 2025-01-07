@@ -78,9 +78,8 @@ public class Alert {
     @Column(name = "FirstNotification")
     private Boolean isFirstNotification;
 
-
-
-    protected Alert() {}
+    protected Alert() {
+    }
 
     public Alert(SafetyStatus status, String description, Location location, User user, String durationOfAlert, Boolean Isactive, Boolean isFirstNotification) {
         this.status = status;

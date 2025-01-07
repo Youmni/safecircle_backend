@@ -285,9 +285,9 @@ public class AlertService {
         Alert alertSave = new Alert(alert.getStatus(),alert.getDescription(),alertLocation, user, alert.getDuration(), alert.setActive(true), alert.setFirstNotification(true));
         alertRepository.save(alertSave);
 
-        Set<Long> notifiedUserIds = new HashSet<>();
+        Set<Long> notifiedUserIds = Collections.synchronizedSet(new HashSet<>());
 
-        for (User userInArea : users) {
+            users.parallelStream().forEach( userInArea -> {
             BigDecimal distance = locationService.calculateDistance(
                     alert.getLocation().latitude(),
                     alert.getLocation().longitude(),
@@ -297,11 +297,12 @@ public class AlertService {
 
             BigDecimal maxDistance = new BigDecimal("2.0");
             if (distance.compareTo(maxDistance) <= 0) {
+
                 if (notifiedUserIds.contains(userInArea.getUserId())) {
-                    continue;
+                    return;
                 }
                 List<FcmToken> tokens = fcmTokenRepository.findByUser(userInArea);
-                FcmToken token = tokens.get(0);
+                FcmToken token = tokens.getFirst();
 
                 Location locationToSend;
                 if (alertSave.getFirstNotification()){
@@ -322,7 +323,7 @@ public class AlertService {
                     notifiedUserIds.add(userInArea.getUserId());
 
             }
-        }
+        });
 
             if (alertSave.getFirstNotification()) {
                 alertSave.setFirstNotification(false);
