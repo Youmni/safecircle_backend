@@ -25,6 +25,16 @@ public class EventDTO {
         this.email = email;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.location = location;
+    }
+    public EventDTO(long eventId, long circleid, int userCountEstimate, String eventName, EventStatus eventStatus, String email, LocalDate startDate, LocalDate endDate, LocationDTO location) {
+        this.eventId = eventId;
+        this.userCountEstimate = userCountEstimate;
+        this.eventName = eventName;
+        this.eventStatus = eventStatus;
+        this.email = email;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.circleid = circleid;
         this.location = location;
     }

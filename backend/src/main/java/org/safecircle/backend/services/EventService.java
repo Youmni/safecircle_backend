@@ -98,6 +98,21 @@ public class EventService {
         }
     }
 
+    public ResponseEntity<String> UpdateEventByIdForStatus(long eventId, EventStatus eventStatus) {
+        try{
+            if(!isEventValid(eventId)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Event is not valid");
+            }
+            Event event = eventRepository.findByEventId(eventId).getFirst();
+            event.setEventStatus(eventStatus);
+            eventRepository.save(event);
+            return ResponseEntity.status(HttpStatus.OK).body("Event updated");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create event" + e.getMessage());
+        }
+    }
+
+
 
     public ResponseEntity<String> UpdateEventById(long eventId, EventDTO eventDTO) {
         try {
@@ -153,6 +168,7 @@ public class EventService {
         eventRepository.findAll().forEach(event -> {
             EventDTO eventDTO = new EventDTO(
                     event.getEventId(),
+                    event.getCircle().getCircleId(),
                     event.getUserCountEstimate(),
                     event.getEventName(),
                     event.getEventStatus(),

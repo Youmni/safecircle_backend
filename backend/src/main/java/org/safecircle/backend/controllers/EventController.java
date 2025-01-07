@@ -38,7 +38,11 @@ public class EventController {
     public ResponseEntity<String> AddUsersToEvent( @PathVariable long eventid, @PathVariable List<Long> userId) {
         return eventService.AddUsersToEvent(eventid, userId);
     }
-
+    @CrossOrigin
+    @PatchMapping("/status/{eventid}")
+    public ResponseEntity<String> UpdateEventByIdForStatus( @PathVariable long eventid, @RequestParam EventStatus newStatus) {
+        return eventService.UpdateEventByIdForStatus(eventid, newStatus);
+    }
     @CrossOrigin
     @PostMapping("/{id}/request")
     public ResponseEntity<String> AddEventRequest(@PathVariable long id, @Valid @RequestBody EventDTO event) {
