@@ -1,6 +1,6 @@
 # SafeCircle Backend
 ## Overview
-SafeCircle is a personal safety app designed for youth and young adults, offering emergency alerts to your safety circles or everyone in cases of absolute emergency. It features customizable alerts, location sharing, and Event Circles for staying connected during events, all for free. SafeCircle addresses the need for accessible safety solutions, making it unique and user-friendly.
+SafeCircle is a personal safety app designed for youth and young adults, offering emergency alerts to your safety circles and everyone within a 2 km radius. It features customizable alerts, location sharing, and Event Circles for staying connected during events, all for free. SafeCircle addresses the need for accessible safety solutions, making it unique and user-friendly.
 ## Functions
 
 ### Alerts
